@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en" data-variant="paddock">
+<head>
+<meta charset="utf-8">
+<title>Merch — Paddock — drift.eg.je</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared.css?v=brand3">
+<link rel="stylesheet" href="paddock.css">
+<link rel="stylesheet" href="../mobile-overrides.css?v=mobile5">
+<style>
+  /* Merch grid — variable card sizes, asymmetric paddock spread */
+  .merch-grid { display:grid; grid-template-columns:repeat(12, 1fr); gap:24px; margin-top:24px; }
+  .merch-card { grid-column: span 12; background:#0f0f10; border:1px solid #2a2a2c; padding:0; display:flex; flex-direction:column; position:relative; overflow:hidden; }
+  .merch-card--feature { grid-column: span 12; }
+  @media (min-width: 900px) {
+    .merch-card--feature { grid-column: span 12; }
+    .merch-card { grid-column: span 6; }
+  }
+  .merch-card__shots { display:grid; grid-template-columns:1fr 1fr; gap:0; background:#0d0d0d; }
+  .merch-card__shot { position:relative; aspect-ratio: 1/1; overflow:hidden; }
+  .merch-card__shot img { width:100%; height:100%; object-fit:contain; display:block; }
+  .merch-card__tape {
+    position:absolute; top:14px; left:14px;
+    font-family: 'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.18em;
+    background: var(--accent); color: var(--accent-ink);
+    padding:4px 8px; text-transform:uppercase;
+  }
+  .merch-card__view-tag {
+    position:absolute; bottom:14px; left:14px;
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.18em;
+    color: rgba(255,255,255,0.55); text-transform:uppercase;
+  }
+  .merch-card__body { padding:24px 26px 26px; display:flex; flex-direction:column; gap:14px; }
+  .merch-card__name {
+    font-family: var(--font-display, 'Oswald', sans-serif);
+    font-size:clamp(28px, 4vw, 44px); line-height:0.95; letter-spacing:0.01em;
+    text-transform:uppercase; color:#fff;
+  }
+  .merch-card__sub {
+    font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.18em;
+    color: rgba(255,255,255,0.55); text-transform:uppercase;
+  }
+  .merch-card__copy { color: rgba(255,255,255,0.78); font-size:14px; line-height:1.55; max-width:60ch; }
+  .merch-card__meta {
+    display:grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap:14px 28px;
+    border-top:1px dashed #2a2a2c; padding-top:14px; margin-top:6px;
+  }
+  .merch-card__meta dt {
+    font-family:'JetBrains Mono', monospace; font-size:9px; letter-spacing:0.22em;
+    color: rgba(255,255,255,0.45); text-transform:uppercase; margin-bottom:4px;
+  }
+  .merch-card__meta dd { color:#fff; font-weight:600; font-size:14px; margin:0; }
+  .merch-card__foot { display:flex; justify-content:space-between; align-items:flex-end; gap:18px; flex-wrap:wrap; margin-top:6px; }
+  .merch-card__price {
+    font-family:'Bebas Neue', sans-serif; font-size:42px; line-height:1;
+    color:#fff; letter-spacing:0.02em;
+  }
+  .merch-card__price small {
+    font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.18em;
+    color: rgba(255,255,255,0.55); margin-left:8px; vertical-align: 6px;
+  }
+
+  /* Soon-tile — placeholder slots for future drops */
+  .merch-soon {
+    grid-column: span 12;
+    aspect-ratio: 4/5; min-height:280px;
+    border:1px dashed rgba(255,255,255,0.18);
+    background: repeating-linear-gradient(
+      45deg,
+      transparent 0 14px,
+      rgba(255,255,255,0.03) 14px 28px
+    );
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:10px; color: rgba(255,255,255,0.55);
+  }
+  @media (min-width: 700px) {
+    .merch-soon { grid-column: span 4; }
+  }
+  .merch-soon__title {
+    font-family: var(--font-display, 'Oswald', sans-serif); font-size:24px; letter-spacing:0.04em;
+    text-transform:uppercase; color: rgba(255,255,255,0.7);
+  }
+  .merch-soon__hint {
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.22em;
+    text-transform:uppercase;
+  }
+</style>
+</head>
+<body class="pad-body">
+
+<div class="pad-strip"></div>
+
+<header class="topbar">
+  <div class="topbar__inner">
+    <a class="brand brand--stack" href="../index.html" aria-label="Dark Force">
+      <svg class="monster-head" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6">
+        <path d="M4 4 L14 10 L24 4 L22 16 L26 22 L14 26 L2 22 L6 16 Z" fill="var(--accent)" stroke="none"/>
+      </svg>
+      <span class="brand__wordmark">DARK <b>FORCE</b></span>
+    </a>
+    <nav class="nav">
+      <a href="home.html">Home</a>
+      <a href="team.html">Team</a>
+      <a href="drivers.html">Drivers</a>
+      <a href="calendar.html">Calendar</a>
+      <a href="tracks.html">Tracks</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="shop.html">Shop</a>
+      <a class="active" href="merch.html">Merch</a>
+    </nav>
+    <div class="topbar__right">
+      <a class="btn btn--primary" href="#">Join</a>
+    </div>
+  </div>
+</header>
+
+<section class="pad-section">
+  <div class="pad-section__head">
+    <span class="num">08</span>
+    <h2>Merch</h2>
+    <span class="meta">DROP 01<br>DARK FORCE</span>
+  </div>
+
+  <div class="merch-grid">
+
+    <article class="merch-card merch-card--feature">
+      <div class="merch-card__shots">
+        <div class="merch-card__shot">
+          <span class="merch-card__tape">DROP 01</span>
+          <img src="merch/tshirt-front.jpg" alt="Dark Force tee — front">
+          <span class="merch-card__view-tag">FRONT · UNLEASH YOUR DEMONS</span>
+        </div>
+        <div class="merch-card__shot">
+          <img src="merch/tshirt-back.jpg" alt="Dark Force tee — back">
+          <span class="merch-card__view-tag">BACK · HANNYA / DRIFT TEAM</span>
+        </div>
+      </div>
+      <div class="merch-card__body">
+        <div class="merch-card__sub">DROP 01 · OVERSIZE TEE</div>
+        <div class="merch-card__name">Dark Force Hannya Tee</div>
+        <p class="merch-card__copy">
+          Plotted on heavyweight 240 g/m² oversize cotton in matte black. Front: chest call-out
+          “UNLEASH YOUR DEMONS” + RALEHIN tab at the collar. Back: full Hannya halo in
+          team yellow with the DARK FORCE / DRIFT TEAM block above.
+        </p>
+        <dl class="merch-card__meta">
+          <div><dt>Fabric</dt><dd>240 g/m² combed cotton</dd></div>
+          <div><dt>Cut</dt><dd>Oversize, drop shoulder</dd></div>
+          <div><dt>Print</dt><dd>Plotter vinyl, hand-pressed</dd></div>
+          <div><dt>Sizes</dt><dd>S · M · L · XL · XXL</dd></div>
+          <div><dt>Drop</dt><dd>01 · Limited run</dd></div>
+        </dl>
+        <div class="merch-card__foot">
+          <div class="merch-card__price">3 900 ₽<small>/ each</small></div>
+          <a class="btn btn--primary" href="https://t.me/darkforcedrift" target="_blank" rel="noopener">
+            Reserve via Telegram →
+          </a>
+        </div>
+      </div>
+    </article>
+
+    <div class="merch-soon">
+      <div class="merch-soon__title">Caps</div>
+      <div class="merch-soon__hint">DROP 02 · COMING</div>
+    </div>
+
+    <div class="merch-soon">
+      <div class="merch-soon__title">Patches</div>
+      <div class="merch-soon__hint">DROP 02 · COMING</div>
+    </div>
+
+    <div class="merch-soon">
+      <div class="merch-soon__title">Stickers</div>
+      <div class="merch-soon__hint">DROP 02 · COMING</div>
+    </div>
+
+  </div>
+</section>
+
+<footer class="pad-footer">
+  <div class="pad-footer__mono">
+    <span>© 2026 DRIFT.EG.JE</span>
+    <span>Paddock variant · merch</span>
+  </div>
+</footer>
+
+<script>
+window.DRIFT_TWEAKS = /*EDITMODE-BEGIN*/{
+  "accent": "orange",
+  "density": "comfy",
+  "motion": true,
+  "hero": "video",
+  "lang": "ru"
+}/*EDITMODE-END*/;
+</script>
+<script src="../drift-data.js"></script>
+<script src="../shared.js"></script>
+</body>
+</html>
