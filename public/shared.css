@@ -386,6 +386,26 @@ button { background: none; border: 0; color: inherit; font: inherit; cursor: poi
 
 body.no-scroll { overflow: hidden; }
 
+/* Soon-state nav link — greyed out, no underline on hover, retains
+   its anchor so the page stays reachable but visually parked. Used
+   right now for Tickets — file kept around, link visually inactive
+   until the team is ready to flip it on. */
+.nav a.soon {
+  color: rgba(255, 255, 255, 0.28) !important;
+  pointer-events: auto;
+}
+.nav a.soon:hover { color: rgba(255, 255, 255, 0.42) !important; }
+.nav a.soon::after {
+  content: 'soon';
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  vertical-align: 1px;
+}
+
 /* Mobile menu backdrop — sibling of .topbar, injected by shared.js.
    Only matters at the mobile breakpoint where the nav becomes a
    slide-in drawer — at desktop sizes the drawer sits inline so the
