@@ -254,7 +254,19 @@
         "x": 50,
         "y": 50,
         "zoom": 1
-      }
+      },
+      "slug": "nissan-370z-pro",
+      "description": "Главная боевая машина команды. Конфигурация под Pro-уровень соревнований.",
+      "buildHistory": [
+        {
+          "id": "946a7831cc6f",
+          "date": "2026-04-15",
+          "title": "2JZ свап (готов)",
+          "body": "Сняли VQ37VHR, поставили **2JZ-GE VVTI** с турбиной Garrett G30-900.\n\nПрошивка ECU занимает примерно 3 дня.",
+          "photoUrl": null
+        }
+      ],
+      "gallery": []
     },
     {
       "name": "Nissan 370z «Drift Missile»",
@@ -277,7 +289,11 @@
         "x": 38,
         "y": 50,
         "zoom": 1
-      }
+      },
+      "slug": "nissan-370z-drift-missile",
+      "description": "Атмосферный «снаряд» с закисью. Лёгкий, маневренный — для local-сессий и тренировок.",
+      "buildHistory": [],
+      "gallery": []
     },
     {
       "name": "BMW e61 Drift Taxi",
@@ -300,7 +316,11 @@
         "x": 59,
         "y": 50,
         "zoom": 1
-      }
+      },
+      "slug": "bmw-e61-drift-taxi",
+      "description": "Drift-taxi для гостевых заездов. MilSpec-проводка под нагрузки.",
+      "buildHistory": [],
+      "gallery": []
     },
     {
       "name": "Chevrolet Corvette C6",
@@ -323,7 +343,11 @@
         "x": 40,
         "y": 50,
         "zoom": 1.15
-      }
+      },
+      "slug": "chevrolet-corvette-c6",
+      "description": "Технические детали уточняются.",
+      "buildHistory": [],
+      "gallery": []
     },
     {
       "name": "BMW e36",
@@ -341,7 +365,11 @@
       "livery": "",
       "notes": "Классика swap-сцены: 1JZ под капотом, лёгкий кузов e36.",
       "id": 5,
-      "photo": "/photos/cars/car-5--2026-05-05T23-26-47-55267840-0B6B-4EAA-B75D-54F02ADE83E1.JPG"
+      "photo": "/photos/cars/car-5--2026-05-05T23-26-47-55267840-0B6B-4EAA-B75D-54F02ADE83E1.JPG",
+      "slug": "bmw-e36",
+      "description": "Классика swap-сцены: 1JZ под капотом, лёгкий кузов e36.",
+      "buildHistory": [],
+      "gallery": []
     },
     {
       "name": "BMW e92",
@@ -359,7 +387,11 @@
       "livery": "",
       "notes": "Полный билд под Pro-Am: 2JZ свап, FIA-каркас, фабричная электроника Ecumaster.",
       "id": 6,
-      "photo": "/photos/cars/car-6--2026-05-05T23-46-54-bbbff96f-dd1e-47f9-a216-ea8d9c784937.JPG"
+      "photo": "/photos/cars/car-6--2026-05-05T23-46-54-bbbff96f-dd1e-47f9-a216-ea8d9c784937.JPG",
+      "slug": "bmw-e92",
+      "description": "Полный билд под Pro-Am: 2JZ свап, FIA-каркас, фабричная электроника Ecumaster.",
+      "buildHistory": [],
+      "gallery": []
     }
   ],
   "team": {

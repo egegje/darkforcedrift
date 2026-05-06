@@ -207,7 +207,20 @@
     transition: border-color .2s var(--ease), transform .2s var(--ease);
     overflow: hidden;
   }
+  .apex-car-link:hover .apex-car,
   .apex-car:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .apex-car-link:hover .apex-car__more { color: var(--accent); }
+  .apex-car__more {
+    margin-top: 18px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--line);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    transition: color .2s var(--ease);
+  }
   .apex-car__photo {
     aspect-ratio: 4 / 3;
     position: relative;
@@ -574,8 +587,12 @@ window.DRIFT_TWEAKS = /*EDITMODE-BEGIN*/{
     var specs = specPairs.map(function (p) {
       return '<dl class="apex-car__spec"><dt>' + esc(p[0]) + '</dt><dd>' + esc(p[1]) + '</dd></dl>';
     }).join('');
+    var slug = c.slug || ('car-' + c.id);
+    var href = 'car.html?slug=' + encodeURIComponent(slug);
+    var vt = 'car-' + esc(slug);
     return '' +
-      '<article class="apex-car" data-slot="car-' + esc(c.id) + '">' +
+      '<a class="apex-car-link" href="' + href + '" data-slot="car-' + esc(c.id) + '" style="text-decoration:none;color:inherit;display:block;view-transition-name:' + vt + '">' +
+      '<article class="apex-car">' +
         '<div class="apex-car__photo' + (c.photo ? ' has-photo' : ' ph') + '" style="' + photoStyle + '" data-label="CAR">' +
           '<div class="pin">Build ' + num + '</div>' +
         '</div>' +
@@ -584,8 +601,10 @@ window.DRIFT_TWEAKS = /*EDITMODE-BEGIN*/{
           (sub ? '<div class="apex-car__sub">' + sub + '</div>' : '') +
           (specPairs.length ? '<div class="apex-car__specs">' + specs + '</div>' : '') +
           (c.notes ? '<div class="apex-car__notes">' + esc(c.notes) + '</div>' : '') +
+          '<div class="apex-car__more">Открыть карточку →</div>' +
         '</div>' +
-      '</article>';
+      '</article>' +
+      '</a>';
   }).join('');
 })();
 </script>

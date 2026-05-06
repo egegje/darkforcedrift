@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="ru" data-variant="paddock">
+<head>
+<meta charset="utf-8">
+<title>Машина — Dark Force</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared.css?v=brand3">
+<link rel="stylesheet" href="paddock.css">
+<link rel="stylesheet" href="../mobile-overrides.css?v=mobile5">
+<style>
+  /* Hero — full-bleed photo with gradient + name overlay */
+  .car-hero {
+    position: relative;
+    margin: 0 -28px 0;
+    width: calc(100% + 56px);
+    aspect-ratio: 16 / 9;
+    background: #0a0a0c center/cover no-repeat;
+    overflow: hidden;
+    border-bottom: 1px solid var(--line);
+  }
+  @media (max-width: 720px) {
+    .car-hero { margin: 0 -16px; width: calc(100% + 32px); aspect-ratio: 4 / 3; }
+  }
+  .car-hero::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, transparent 35%, oklch(0.10 0.01 250 / 0.92) 95%);
+    pointer-events: none;
+  }
+  .car-hero__inner {
+    position: absolute; inset: 0;
+    padding: 28px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    z-index: 2;
+  }
+  .car-hero__pin {
+    align-self: flex-start;
+    background: var(--accent); color: var(--accent-ink);
+    font-family: var(--font-head, 'Bebas Neue', sans-serif);
+    font-size: 14px; letter-spacing: 0.1em;
+    padding: 5px 12px;
+    margin-bottom: 16px;
+  }
+  .car-hero__title {
+    font-family: var(--font-head, 'Bebas Neue', sans-serif);
+    font-size: clamp(40px, 7vw, 96px);
+    line-height: 0.95;
+    text-transform: uppercase;
+    color: var(--fg, #fff);
+    margin: 0;
+  }
+  .car-hero__sub {
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+    margin-top: 10px;
+  }
+  .car-hero__sub b { color: var(--accent); font-weight: 600; }
+
+  .car-back {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+    margin-top: 18px; margin-bottom: 8px;
+    text-decoration: none;
+  }
+  .car-back:hover { color: var(--accent); }
+
+  /* Specs grid */
+  .car-specs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px 28px;
+    margin: 32px 0 12px;
+    padding: 22px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  @media (min-width: 700px) {
+    .car-specs { grid-template-columns: repeat(4, 1fr); }
+  }
+  .car-spec dt {
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    margin-bottom: 4px;
+  }
+  .car-spec dd {
+    margin: 0;
+    font-family: var(--font-head, 'Bebas Neue', sans-serif);
+    font-size: 24px;
+    letter-spacing: 0.02em;
+    color: var(--fg);
+    line-height: 1;
+  }
+  .car-spec dd small {
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 11px;
+    color: var(--fg-dim);
+    letter-spacing: 0.12em;
+    margin-left: 4px;
+  }
+
+  /* Description block */
+  .car-desc {
+    margin: 26px 0 8px;
+    max-width: 70ch;
+    font-size: 15px;
+    line-height: 1.65;
+    color: rgba(255,255,255,0.82);
+  }
+  .car-desc p { margin: 0 0 12px; }
+
+  /* Build chronology — engineering log style */
+  .car-builds {
+    margin-top: 18px;
+    position: relative;
+  }
+  .car-builds::before {
+    content: "";
+    position: absolute;
+    top: 8px; bottom: 8px; left: 100px;
+    width: 1px;
+    background: var(--line-strong, #444);
+  }
+  @media (max-width: 720px) {
+    .car-builds::before { left: 12px; }
+  }
+  .car-build {
+    position: relative;
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 24px;
+    padding: 22px 0 26px;
+    border-bottom: 1px dashed var(--line);
+  }
+  @media (max-width: 720px) {
+    .car-build { grid-template-columns: 1fr; gap: 8px; padding-left: 32px; }
+  }
+  .car-build:last-child { border-bottom: 0; }
+  .car-build__date {
+    position: relative;
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    color: var(--fg-dim);
+    text-transform: uppercase;
+    padding-top: 6px;
+  }
+  .car-build__date::after {
+    content: "";
+    position: absolute;
+    top: 11px;
+    right: -27px;
+    width: 11px; height: 11px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px var(--bg);
+  }
+  @media (max-width: 720px) {
+    .car-build__date::after { left: -25px; right: auto; top: 6px; }
+  }
+  .car-build__title {
+    font-family: var(--font-head, 'Bebas Neue', sans-serif);
+    font-size: 28px;
+    text-transform: uppercase;
+    line-height: 1.05;
+    margin: 0 0 8px;
+    color: var(--fg);
+  }
+  .car-build__body {
+    font-size: 14px;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.82);
+    white-space: pre-wrap;
+  }
+  .car-build__photo {
+    margin-top: 14px;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    width: 100%;
+    border-radius: 0;
+    display: block;
+    border: 1px solid var(--line);
+  }
+
+  /* Gallery grid */
+  .car-gallery {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  @media (min-width: 700px) {
+    .car-gallery { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (min-width: 1100px) {
+    .car-gallery { grid-template-columns: repeat(4, 1fr); }
+  }
+  .car-gallery img {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    display: block;
+    border: 1px solid var(--line);
+    transition: border-color .2s var(--ease, cubic-bezier(.2,.7,.2,1));
+  }
+  .car-gallery img:hover { border-color: var(--accent); }
+
+  /* Empty state for missing car */
+  .car-empty {
+    padding: 80px 28px;
+    text-align: center;
+  }
+  .car-empty h1 {
+    font-family: var(--font-head, 'Bebas Neue', sans-serif);
+    font-size: 48px;
+    text-transform: uppercase;
+    margin: 0 0 12px;
+    color: var(--fg);
+  }
+  .car-empty p {
+    color: var(--fg-dim);
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .car-empty a {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 22px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    text-decoration: none;
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  .car-empty a:hover { background: var(--accent); color: var(--accent-ink); }
+</style>
+</head>
+<body class="pad-body">
+
+<div class="pad-strip"></div>
+
+<header class="topbar">
+  <div class="topbar__inner">
+    <a class="brand brand--stack" href="../index.html" aria-label="Dark Force">
+      <svg class="monster-head" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6">
+        <path d="M4 4 L14 10 L24 4 L22 16 L26 22 L14 26 L2 22 L6 16 Z" fill="var(--accent)" stroke="none"/>
+      </svg>
+      <span class="brand__wordmark">DARK <b>FORCE</b></span>
+    </a>
+    <nav class="nav">
+      <a href="home.html">Home</a>
+      <a class="active" href="team.html">Team</a>
+      <a href="drivers.html">Drivers</a>
+      <a href="calendar.html">Calendar</a>
+      <a href="tracks.html">Tracks</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="shop.html">Shop</a>
+      <a href="merch.html">Merch</a>
+      <a href="sponsors.html">Sponsors</a>
+      <a href="coaching.html">Coaching</a>
+      <a href="prints.html">Prints</a>
+      <a href="inner-circle.html">Inner</a>
+      <a href="courses.html">Courses</a>
+    </nav>
+    <div class="topbar__right">
+      <a class="btn" href="team.html">К гаражу →</a>
+    </div>
+  </div>
+</header>
+
+<section class="pad-section" id="car-section">
+  <a class="car-back" href="team.html">← Назад в гараж</a>
+
+  <div id="car-host"></div>
+</section>
+
+<footer class="pad-footer">
+  <div class="pad-footer__grid">
+    <div>
+      <div class="brand" style="margin-bottom:14px">
+        <svg class="monster-head" viewBox="0 0 28 28" fill="none"><path d="M4 4 L14 10 L24 4 L22 16 L26 22 L14 26 L2 22 L6 16 Z" fill="var(--accent)"/></svg>
+        DARK<b>FORCE</b>
+      </div>
+      <p style="font-size:13px;color:var(--fg-dim);line-height:1.5;max-width:320px">Drift community Dark Force. Drivers, tracks, services.</p>
+    </div>
+    <div><h5>THE TEAM</h5><a href="drivers.html">Drivers</a><a href="team.html">Cars</a><a href="team.html">Builds</a></div>
+    <div><h5>RACING</h5><a href="calendar.html">Calendar</a><a href="tracks.html">Tracks</a></div>
+    <div><h5>PADDOCK</h5><a href="shop.html">Services</a><a href="gallery.html">Gallery</a></div>
+  </div>
+  <div class="pad-footer__mono">
+    <span>© 2026 DARKFORCEDRIFT.COM</span>
+    <span>Paddock variant</span>
+  </div>
+</footer>
+
+<script src="../drift-data.js"></script>
+<script src="../shared.js"></script>
+<script>
+(function () {
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[<>&"']/g, function (c) {
+      return ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;','\'':'&#39;'})[c];
+    });
+  }
+  function getSlug() {
+    try {
+      var u = new URL(window.location.href);
+      return u.searchParams.get('slug') || '';
+    } catch (e) { return ''; }
+  }
+  function fmtDate(d) {
+    if (!d) return '';
+    // Accept ISO ("2026-04-15") or anything — pass through if not ISO.
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(d);
+    if (!m) return d;
+    var months = ['ЯНВ','ФЕВ','МАР','АПР','МАЙ','ИЮН','ИЮЛ','АВГ','СЕН','ОКТ','НОЯ','ДЕК'];
+    return m[3] + ' ' + months[parseInt(m[2], 10) - 1] + ' ' + m[1];
+  }
+  // Light markdown: **bold**, *italic*, line breaks. Escape HTML first.
+  function md(s) {
+    var safe = esc(s || '');
+    safe = safe.replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>');
+    safe = safe.replace(/\*([^*]+)\*/g, '<i>$1</i>');
+    return safe;
+  }
+
+  var slug = getSlug();
+  var data = window.DRIFT_DATA || {};
+  var cars = data.cars || [];
+  var car = slug ? cars.find(function (c) { return c.slug === slug; }) : null;
+  var host = document.getElementById('car-host');
+  if (!host) return;
+
+  if (!slug || !car) {
+    host.innerHTML = '<div class="car-empty">' +
+      '<h1>Машина не найдена</h1>' +
+      '<p>такого билда пока нет в гараже</p>' +
+      '<a href="team.html">Вернуться в гараж →</a>' +
+    '</div>';
+    document.title = 'Машина не найдена — Dark Force';
+    return;
+  }
+
+  document.title = car.name + ' — Dark Force';
+
+  var subParts = [];
+  if (car.color) subParts.push(esc(car.color));
+  if (car.driver) subParts.push('<b>' + esc(car.driver) + '</b>');
+  var sub = subParts.join(' · ');
+
+  var specPairs = [
+    ['Двигатель', car.engine],
+    ['Мощность', car.hp ? car.hp + ' HP' : null],
+    ['Момент', car.torque],
+    ['Турбо', car.turbo],
+    ['ECU', car.ecu],
+    ['Каркас', car.cage],
+    ['Angle kit', car.angleKit],
+    ['Подвеска', car.coilovers],
+    ['Топливо', car.fuel],
+    ['Ливрея', car.livery],
+  ].filter(function (p) { return p[1]; });
+
+  var specs = specPairs.map(function (p) {
+    return '<dl class="car-spec"><dt>' + esc(p[0]) + '</dt><dd>' + esc(p[1]) + '</dd></dl>';
+  }).join('');
+
+  var heroStyle = car.photo
+    ? 'background-image:url(\'' + esc(car.photo) + '\')'
+    : '';
+  var vt = 'car-' + esc(car.slug);
+
+  var hero = '' +
+    '<div class="car-hero" style="' + heroStyle + ';view-transition-name:' + vt + '">' +
+      '<div class="car-hero__inner">' +
+        '<span class="car-hero__pin">BUILD · #' + esc(car.id) + '</span>' +
+        '<h1 class="car-hero__title">' + esc(car.name) + '</h1>' +
+        (sub ? '<div class="car-hero__sub">' + sub + '</div>' : '') +
+      '</div>' +
+    '</div>';
+
+  // Description: prefer description, fall back to notes.
+  var descText = car.description && car.description.trim() ? car.description : (car.notes || '');
+  var paragraphs = String(descText).split(/\n\n+/).filter(function (p) { return p.trim(); });
+  var descHtml = paragraphs.length
+    ? '<div class="car-desc">' + paragraphs.map(function (p) { return '<p>' + md(p) + '</p>'; }).join('') + '</div>'
+    : '';
+
+  var specsHtml = specs
+    ? '<div class="car-specs">' + specs + '</div>'
+    : '';
+
+  var builds = Array.isArray(car.buildHistory) ? car.buildHistory : [];
+  var buildsHtml = '';
+  if (builds.length) {
+    var rows = builds.map(function (e) {
+      var photo = e.photoUrl
+        ? '<img class="car-build__photo" src="' + esc(e.photoUrl) + '" loading="lazy" alt="">'
+        : '';
+      return '<article class="car-build">' +
+        '<div class="car-build__date">' + esc(fmtDate(e.date)) + '</div>' +
+        '<div>' +
+          (e.title ? '<h3 class="car-build__title">' + esc(e.title) + '</h3>' : '') +
+          (e.body ? '<div class="car-build__body">' + md(e.body) + '</div>' : '') +
+          photo +
+        '</div>' +
+      '</article>';
+    }).join('');
+    buildsHtml = '' +
+      '<div class="pad-section__head" style="margin-top:48px">' +
+        '<span class="num">' + (builds.length < 10 ? '0' : '') + builds.length + '</span>' +
+        '<h2>Хроника билда</h2>' +
+        '<span class="meta">' + builds.length + (builds.length === 1 ? ' STAGE' : ' STAGES') + '</span>' +
+      '</div>' +
+      '<div class="car-builds">' + rows + '</div>';
+  }
+
+  var gallery = Array.isArray(car.gallery) ? car.gallery : [];
+  var galleryHtml = '';
+  if (gallery.length) {
+    galleryHtml = '' +
+      '<div class="pad-section__head" style="margin-top:48px">' +
+        '<span class="num">' + (gallery.length < 10 ? '0' : '') + gallery.length + '</span>' +
+        '<h2>Галерея</h2>' +
+        '<span class="meta">' + gallery.length + (gallery.length === 1 ? ' SHOT' : ' SHOTS') + '</span>' +
+      '</div>' +
+      '<div class="car-gallery">' +
+        gallery.map(function (u) {
+          return '<img src="' + esc(u) + '" loading="lazy" alt="">';
+        }).join('') +
+      '</div>';
+  }
+
+  host.innerHTML = hero +
+    '<div class="pad-section__head" style="margin-top:32px">' +
+      '<span class="num">01</span>' +
+      '<h2>Спецификация</h2>' +
+      '<span class="meta">' + specPairs.length + ' PARAMS</span>' +
+    '</div>' +
+    specsHtml +
+    descHtml +
+    buildsHtml +
+    galleryHtml;
+})();
+</script>
+</body>
+</html>

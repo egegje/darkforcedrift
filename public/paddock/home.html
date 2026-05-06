@@ -10,6 +10,11 @@
 <link rel="stylesheet" href="../shared.css?v=brand3">
 <link rel="stylesheet" href="paddock.css">
 <link rel="stylesheet" href="../mobile-overrides.css?v=mobile5">
+<style>
+  .pad-car-link { transition: transform .2s ease; }
+  .pad-car-link:hover .pad-crew__card { border-color: var(--accent); }
+  .pad-car-link:hover { transform: translateY(-2px); }
+</style>
 </head>
 <body class="pad-body">
 
@@ -223,8 +228,12 @@ window.DRIFT_TWEAKS = /*EDITMODE-BEGIN*/{
     document.getElementById('pad-cars-count').textContent = cars.length + (cars.length === 1 ? ' CAR' : ' CARS');
     carsHost.innerHTML = cars.map(function (c) {
       var num = String(c.id).padStart(2, '0');
+      var slug = c.slug || ('car-' + c.id);
+      var href = 'car.html?slug=' + encodeURIComponent(slug);
+      var vt = 'car-' + esc(slug);
       return '' +
-        '<div class="pad-crew__card" data-slot="car-' + esc(c.id) + '">' +
+        '<a class="pad-car-link" href="' + href + '" data-slot="car-' + esc(c.id) + '" style="text-decoration:none;color:inherit;display:block;view-transition-name:' + vt + '">' +
+        '<div class="pad-crew__card">' +
           '<div class="pad-crew__img">' +
             '<div class="ph' + (c.photo ? ' has-photo' : '') + '"' + (c.photo ? ' style="background-image:url(\'' + esc(c.photo) + '\');background-size:cover;background-position:center"' : '') + ' data-label="CAR"></div>' +
             '<span class="pad-crew__tape">CAR</span>' +
@@ -235,7 +244,8 @@ window.DRIFT_TWEAKS = /*EDITMODE-BEGIN*/{
             '<div class="pad-crew__name">' + esc(c.name) + '</div>' +
             '<div class="pad-crew__car">' + esc(c.engine || '') + (c.hp ? ' · ' + c.hp + ' HP' : '') + '</div>' +
           '</div>' +
-        '</div>';
+        '</div>' +
+        '</a>';
     }).join('');
   }
 

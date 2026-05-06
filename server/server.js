@@ -1122,27 +1122,207 @@ const DASH_HTML = `<!doctype html>
       ['website', 'Сайт трассы', entity.website || '', true],
     ] : [
       ['name', 'Название/модель', entity.name, true],
+      ['slug', 'URL-слаг', entity.slug || '', false],
       ['driver', 'Пилот', entity.driver || '', false],
       ['engine', 'Двигатель', entity.engine || '', false],
       ['hp', 'HP', entity.hp || '', false, 'number'],
       ['livery', 'Ливрея', entity.livery || '', false],
-      ['notes', 'Заметки', entity.notes || '', true],
+      ['notes', 'Краткие заметки', entity.notes || '', true],
+      ['description', 'Полное описание', entity.description || '', true, 'textarea'],
     ];
     const rows = fields.map((f) => {
       const [name, label, value, full, type] = f;
+      if (type === 'textarea') {
+        return '<div class="row full"><div><label>' + escHtml(label) + '</label>' +
+          '<textarea data-edit-field="' + name + '" rows="5" style="width:100%;font:inherit;background:#0d0d10;color:#f5f5f7;border:1px solid #1f1f24;border-radius:6px;padding:8px;resize:vertical">' + escHtml(String(value)) + '</textarea></div></div>';
+      }
       return '<div class="row ' + (full ? 'full' : '') + '"><div><label>' + escHtml(label) + '</label>' +
         '<input data-edit-field="' + name + '" type="' + (type || 'text') + '" value="' + escHtml(String(value)) + '"></div></div>';
     }).join('');
     const titleByKind = { driver: 'пилота', track: 'трассу', car: 'машину' };
+    const buildsPanel = (kind === 'car') ? renderCarBuildsPanel(entity) : '';
+    const detailLink = (kind === 'car' && entity.slug)
+      ? '<div style="margin:10px 0 14px"><a href="/paddock/car.html?slug=' + escHtml(entity.slug) + '" target="_blank" style="font-family:var(--font-mono,monospace);font-size:11px;color:#ff6b35">Открыть страницу машины ↗</a></div>'
+      : '';
     return '<div class="new-form">' +
       '<h4>Редактировать ' + titleByKind[kind] + '</h4>' +
+      detailLink +
       rows +
       '<div class="actions">' +
         '<button onclick="closeEditEntity()">Отмена</button>' +
         '<button class="primary" onclick="saveEditEntity()">Сохранить</button>' +
       '</div>' +
+      buildsPanel +
     '</div>';
   }
+
+  function renderCarBuildsPanel(car) {
+    const builds = Array.isArray(car.buildHistory) ? car.buildHistory : [];
+    const gallery = Array.isArray(car.gallery) ? car.gallery : [];
+    const slug = car.slug || '';
+    const items = builds.map((e, i) => {
+      const photoBlock = e.photoUrl
+        ? '<div style="margin-top:8px"><img src="' + escHtml(e.photoUrl) + '" style="max-width:100%;border-radius:6px;display:block"><button onclick="removeCarBuildPhoto(\\'' + escHtml(slug) + '\\',\\'' + escHtml(e.id) + '\\')" style="margin-top:6px">Удалить фото</button></div>'
+        : '<div style="margin-top:8px"><label class="pick" style="display:inline-block;padding:6px 10px;background:#1f1f24;border-radius:6px;cursor:pointer">Загрузить фото<input type="file" accept="image/*" style="display:none" onchange="uploadCarBuildPhoto(\\'' + escHtml(slug) + '\\',\\'' + escHtml(e.id) + '\\',this)"></label></div>';
+      return '<div class="build-row" data-build-id="' + escHtml(e.id) + '" style="border:1px solid #1f1f24;border-radius:8px;padding:10px;margin-bottom:8px;background:#0e0e12">' +
+        '<div class="row"><div><label>Дата</label><input data-build-field="date" data-build-id="' + escHtml(e.id) + '" value="' + escHtml(e.date || '') + '" placeholder="2026-04-15"></div>' +
+                       '<div><label>Заголовок</label><input data-build-field="title" data-build-id="' + escHtml(e.id) + '" value="' + escHtml(e.title || '') + '" placeholder="2JZ свап"></div></div>' +
+        '<div class="row full"><div><label>Описание (markdown OK)</label><textarea data-build-field="body" data-build-id="' + escHtml(e.id) + '" rows="4" style="width:100%;font:inherit;background:#0d0d10;color:#f5f5f7;border:1px solid #1f1f24;border-radius:6px;padding:8px;resize:vertical">' + escHtml(e.body || '') + '</textarea></div></div>' +
+        photoBlock +
+        '<div class="actions" style="margin-top:8px">' +
+          (i > 0 ? '<button onclick="moveCarBuild(\\'' + escHtml(slug) + '\\',\\'' + escHtml(e.id) + '\\',-1)">↑</button>' : '') +
+          (i < builds.length - 1 ? '<button onclick="moveCarBuild(\\'' + escHtml(slug) + '\\',\\'' + escHtml(e.id) + '\\',1)">↓</button>' : '') +
+          '<button onclick="saveCarBuild(\\'' + escHtml(slug) + '\\',\\'' + escHtml(e.id) + '\\')">Сохранить запись</button>' +
+          '<button class="danger" onclick="removeCarBuild(\\'' + escHtml(slug) + '\\',\\'' + escHtml(e.id) + '\\')">Удалить</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+    const galleryItems = gallery.map((url, i) =>
+      '<div style="position:relative;display:inline-block;margin:0 6px 6px 0">' +
+        '<img src="' + escHtml(url) + '" style="width:120px;height:75px;object-fit:cover;border-radius:6px;display:block">' +
+        '<button onclick="removeCarGalleryPhoto(\\'' + escHtml(slug) + '\\',\\'' + escHtml(url) + '\\')" style="position:absolute;top:2px;right:2px;background:#ff3b30;color:white;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:12px;line-height:1">×</button>' +
+      '</div>'
+    ).join('');
+    return '<div style="margin-top:18px;padding-top:14px;border-top:1px dashed #1f1f24">' +
+      '<h4 style="margin:0 0 10px">Хроника билда</h4>' +
+      (items || '<div style="font-size:12px;color:#8b8b95;margin-bottom:8px">Записей пока нет.</div>') +
+      '<div class="actions" style="margin-bottom:18px"><button class="primary" onclick="addCarBuild(\\'' + escHtml(slug) + '\\')">+ Новая запись</button></div>' +
+      '<h4 style="margin:0 0 10px">Доп. галерея машины</h4>' +
+      (galleryItems ? '<div style="margin-bottom:8px">' + galleryItems + '</div>' : '') +
+      '<label class="pick" style="display:inline-block;padding:6px 10px;background:#1f1f24;border-radius:6px;cursor:pointer">+ Фото в галерею<input type="file" accept="image/*" style="display:none" onchange="uploadCarGalleryPhoto(\\'' + escHtml(slug) + '\\',this)"></label>' +
+    '</div>';
+  }
+
+  async function addCarBuild(carSlug) {
+    const r = await fetch('/admin/api/car-build', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ carSlug, action: 'add', entry: { date: new Date().toISOString().slice(0, 10), title: '', body: '' } }),
+    });
+    if (!r.ok) { toast('Ошибка: ' + r.status); return; }
+    toast('Запись добавлена');
+    await loadAll();
+    renderRail();
+    refreshFrame();
+  }
+
+  async function saveCarBuild(carSlug, entryId) {
+    const entry = {};
+    document.querySelectorAll('[data-build-field][data-build-id="' + entryId + '"]').forEach((el) => {
+      entry[el.getAttribute('data-build-field')] = el.value;
+    });
+    const r = await fetch('/admin/api/car-build', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ carSlug, action: 'edit', entryId, entry }),
+    });
+    if (!r.ok) { toast('Ошибка: ' + r.status); return; }
+    toast('Сохранено');
+    await loadAll();
+    refreshFrame();
+  }
+
+  async function removeCarBuild(carSlug, entryId) {
+    if (!confirm('Удалить запись?')) return;
+    const r = await fetch('/admin/api/car-build', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ carSlug, action: 'remove', entryId }),
+    });
+    if (!r.ok) { toast('Ошибка: ' + r.status); return; }
+    toast('Удалено');
+    await loadAll();
+    renderRail();
+    refreshFrame();
+  }
+
+  async function moveCarBuild(carSlug, entryId, delta) {
+    const car = state.cars.find((c) => c.slug === carSlug);
+    if (!car || !car.buildHistory) return;
+    const ids = car.buildHistory.map((x) => x.id);
+    const idx = ids.indexOf(entryId);
+    if (idx === -1) return;
+    const next = idx + delta;
+    if (next < 0 || next >= ids.length) return;
+    const tmp = ids[idx]; ids[idx] = ids[next]; ids[next] = tmp;
+    const r = await fetch('/admin/api/car-build', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ carSlug, action: 'reorder', order: ids }),
+    });
+    if (!r.ok) { toast('Ошибка: ' + r.status); return; }
+    await loadAll();
+    renderRail();
+    refreshFrame();
+  }
+
+  async function uploadCarBuildPhoto(carSlug, entryId, input) {
+    const file = input.files && input.files[0]; if (!file) return;
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('kind', 'build');
+    fd.append('carSlug', carSlug);
+    fd.append('entryId', entryId);
+    const r = await fetch('/admin/api/car-photo', { method: 'POST', credentials: 'same-origin', body: fd });
+    if (!r.ok) { toast('Ошибка загрузки: ' + r.status); return; }
+    toast('Фото загружено');
+    await loadAll();
+    renderRail();
+    refreshFrame();
+  }
+
+  async function removeCarBuildPhoto(carSlug, entryId) {
+    const car = state.cars.find((c) => c.slug === carSlug);
+    if (!car) return;
+    const e = (car.buildHistory || []).find((x) => x.id === entryId);
+    if (!e) return;
+    const r = await fetch('/admin/api/car-build', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ carSlug, action: 'edit', entryId, entry: { ...e, photoUrl: null } }),
+    });
+    if (!r.ok) { toast('Ошибка: ' + r.status); return; }
+    toast('Фото убрано');
+    await loadAll();
+    renderRail();
+    refreshFrame();
+  }
+
+  async function uploadCarGalleryPhoto(carSlug, input) {
+    const file = input.files && input.files[0]; if (!file) return;
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('kind', 'gallery');
+    fd.append('carSlug', carSlug);
+    const r = await fetch('/admin/api/car-photo', { method: 'POST', credentials: 'same-origin', body: fd });
+    if (!r.ok) { toast('Ошибка загрузки: ' + r.status); return; }
+    toast('Фото добавлено в галерею');
+    await loadAll();
+    renderRail();
+    refreshFrame();
+  }
+
+  async function removeCarGalleryPhoto(carSlug, photoUrl) {
+    if (!confirm('Удалить фото из галереи?')) return;
+    const r = await fetch('/admin/api/car-build', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ carSlug, action: 'gallery-remove', photoUrl }),
+    });
+    if (!r.ok) { toast('Ошибка: ' + r.status); return; }
+    toast('Фото удалено');
+    await loadAll();
+    renderRail();
+    refreshFrame();
+  }
+  window.addCarBuild = addCarBuild;
+  window.saveCarBuild = saveCarBuild;
+  window.removeCarBuild = removeCarBuild;
+  window.moveCarBuild = moveCarBuild;
+  window.uploadCarBuildPhoto = uploadCarBuildPhoto;
+  window.removeCarBuildPhoto = removeCarBuildPhoto;
+  window.uploadCarGalleryPhoto = uploadCarGalleryPhoto;
+  window.removeCarGalleryPhoto = removeCarGalleryPhoto;
   async function saveEditEntity() {
     const { kind, id } = state.editEntity;
     const body = {};
@@ -2111,6 +2291,29 @@ app.post("/admin/api/reorder", { preHandler: requireAuth }, async (req, reply) =
   return { ok: true };
 });
 
+// Slug helper for cars — kebab-case ASCII, transliterates Cyrillic.
+function carSlugify(s) {
+  const cyr = {
+    а:"a",б:"b",в:"v",г:"g",д:"d",е:"e",ё:"e",ж:"zh",з:"z",и:"i",й:"y",
+    к:"k",л:"l",м:"m",н:"n",о:"o",п:"p",р:"r",с:"s",т:"t",у:"u",ф:"f",
+    х:"kh",ц:"ts",ч:"ch",ш:"sh",щ:"shch",ъ:"",ы:"y",ь:"",э:"e",ю:"yu",я:"ya",
+  };
+  return String(s || "")
+    .toLowerCase()
+    .replace(/[а-яё]/g, (c) => cyr[c] || "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+}
+function uniqueCarSlug(cars, base, exceptId) {
+  let slug = base || "car";
+  let i = 1;
+  while ((cars || []).some((c) => c.slug === slug && c.id !== exceptId)) {
+    slug = (base || "car") + "-" + (++i);
+  }
+  return slug;
+}
+
 // Cars: same shape as drivers in spirit. id is a small auto-incrementing
 // integer so slot ids stay short ("car-3").
 app.post("/admin/api/cars", { preHandler: requireAuth }, async (req, reply) => {
@@ -2120,15 +2323,20 @@ app.post("/admin/api/cars", { preHandler: requireAuth }, async (req, reply) => {
   const data = await readJson(DRIFT_DATA, {});
   if (!Array.isArray(data.cars)) data.cars = [];
   const nextId = data.cars.length ? Math.max(...data.cars.map((c) => c.id || 0)) + 1 : 1;
+  const slug = uniqueCarSlug(data.cars, carSlugify(b.slug || name));
   const car = {
     id: nextId,
+    slug,
     name: name.slice(0, 120),
     driver: b.driver ? String(b.driver).slice(0, 80) : "",
     engine: b.engine ? String(b.engine).slice(0, 80) : "",
     hp: b.hp ? Number(b.hp) || 0 : 0,
     livery: b.livery ? String(b.livery).slice(0, 80) : "",
     notes: b.notes ? String(b.notes).slice(0, 240) : "",
+    description: b.description ? String(b.description).slice(0, 4000) : "",
     photo: null,
+    buildHistory: [],
+    gallery: [],
   };
   data.cars.push(car);
   await writeJson(DRIFT_DATA, data);
@@ -2148,9 +2356,187 @@ app.patch("/admin/api/cars/:id", { preHandler: requireAuth }, async (req, reply)
   if (b.hp !== undefined) car.hp = Number(b.hp) || 0;
   if (b.livery !== undefined) car.livery = String(b.livery).slice(0, 80);
   if (b.notes !== undefined) car.notes = String(b.notes).slice(0, 240);
+  if (b.description !== undefined) car.description = String(b.description).slice(0, 4000);
+  if (b.slug !== undefined) {
+    const desired = carSlugify(b.slug);
+    if (desired) car.slug = uniqueCarSlug(data.cars, desired, car.id);
+  }
+  if (!car.slug) {
+    car.slug = uniqueCarSlug(data.cars, carSlugify(car.name) || ("car-" + car.id), car.id);
+  }
+  if (!Array.isArray(car.buildHistory)) car.buildHistory = [];
+  if (!Array.isArray(car.gallery)) car.gallery = [];
   await writeJson(DRIFT_DATA, data);
   // (draft only — public sync deferred to /admin/api/publish)
   return car;
+});
+
+// Build chronology / gallery management for a single car.
+// Body: { carSlug, action, entry?, entryId?, order?, photoUrl? }
+//   action: 'add' | 'edit' | 'remove' | 'reorder' | 'gallery-add' | 'gallery-remove' | 'gallery-reorder'
+//   entry  : { date, title, body, photoUrl }     (for add/edit)
+//   entryId: existing build entry id              (for edit/remove)
+//   order  : array of entry ids in desired order  (for reorder)
+//   photoUrl: gallery photo path                  (for gallery-*)
+app.post("/admin/api/car-build", { preHandler: requireAuth }, async (req, reply) => {
+  const b = req.body ?? {};
+  const carSlug = String(b.carSlug || "").trim();
+  const action = String(b.action || "").trim();
+  if (!carSlug || !action) return reply.code(400).send({ error: "carSlug and action required" });
+  const data = await readJson(DRIFT_DATA, {});
+  const car = (data.cars || []).find((c) => c.slug === carSlug);
+  if (!car) return reply.code(404).send({ error: "car not found" });
+  if (!Array.isArray(car.buildHistory)) car.buildHistory = [];
+  if (!Array.isArray(car.gallery)) car.gallery = [];
+
+  if (action === "add") {
+    const e = b.entry || {};
+    const entry = {
+      id: randomBytes(6).toString("hex"),
+      date: String(e.date || "").slice(0, 32),
+      title: String(e.title || "").slice(0, 160),
+      body: String(e.body || "").slice(0, 4000),
+      photoUrl: e.photoUrl ? String(e.photoUrl).slice(0, 400) : null,
+    };
+    car.buildHistory.push(entry);
+    await writeJson(DRIFT_DATA, data);
+    return { ok: true, entry };
+  }
+
+  if (action === "edit") {
+    const id = String(b.entryId || "");
+    const target = car.buildHistory.find((x) => x.id === id);
+    if (!target) return reply.code(404).send({ error: "entry not found" });
+    const e = b.entry || {};
+    if (e.date !== undefined) target.date = String(e.date).slice(0, 32);
+    if (e.title !== undefined) target.title = String(e.title).slice(0, 160);
+    if (e.body !== undefined) target.body = String(e.body).slice(0, 4000);
+    if (e.photoUrl !== undefined) target.photoUrl = e.photoUrl ? String(e.photoUrl).slice(0, 400) : null;
+    await writeJson(DRIFT_DATA, data);
+    return { ok: true, entry: target };
+  }
+
+  if (action === "remove") {
+    const id = String(b.entryId || "");
+    const idx = car.buildHistory.findIndex((x) => x.id === id);
+    if (idx === -1) return reply.code(404).send({ error: "entry not found" });
+    const removed = car.buildHistory[idx];
+    if (removed.photoUrl && removed.photoUrl.startsWith("/photos/cars/")) {
+      await unlink(join(PUB, removed.photoUrl)).catch(() => {});
+    }
+    car.buildHistory.splice(idx, 1);
+    await writeJson(DRIFT_DATA, data);
+    return { ok: true };
+  }
+
+  if (action === "reorder") {
+    const order = Array.isArray(b.order) ? b.order : [];
+    const byId = new Map(car.buildHistory.map((x) => [x.id, x]));
+    const next = [];
+    for (const id of order) {
+      const item = byId.get(String(id));
+      if (item) { next.push(item); byId.delete(String(id)); }
+    }
+    for (const remaining of byId.values()) next.push(remaining);
+    car.buildHistory = next;
+    await writeJson(DRIFT_DATA, data);
+    return { ok: true };
+  }
+
+  if (action === "gallery-add") {
+    const url = String(b.photoUrl || "").trim();
+    if (!url) return reply.code(400).send({ error: "photoUrl required" });
+    car.gallery.push(url.slice(0, 400));
+    await writeJson(DRIFT_DATA, data);
+    return { ok: true };
+  }
+
+  if (action === "gallery-remove") {
+    const url = String(b.photoUrl || "");
+    const idx = car.gallery.indexOf(url);
+    if (idx === -1) return reply.code(404).send({ error: "not in gallery" });
+    car.gallery.splice(idx, 1);
+    if (url.startsWith("/photos/cars/")) {
+      await unlink(join(PUB, url)).catch(() => {});
+    }
+    await writeJson(DRIFT_DATA, data);
+    return { ok: true };
+  }
+
+  if (action === "gallery-reorder") {
+    const order = Array.isArray(b.order) ? b.order : [];
+    const set = new Set(car.gallery);
+    const next = [];
+    for (const u of order) { if (set.has(u)) { next.push(u); set.delete(u); } }
+    for (const remaining of set) next.push(remaining);
+    car.gallery = next;
+    await writeJson(DRIFT_DATA, data);
+    return { ok: true };
+  }
+
+  return reply.code(400).send({ error: "unknown action" });
+});
+
+// Direct file upload for a car-build entry photo or car-gallery photo.
+// Field 'kind' = 'build' | 'gallery'; field 'carSlug' identifies the car.
+app.post("/admin/api/car-photo", { preHandler: requireAuth }, async (req, reply) => {
+  const parts = req.parts();
+  let fileBuf = null;
+  let fileName = null;
+  let kind = null;
+  let carSlug = null;
+  let entryId = null;
+  for await (const part of parts) {
+    if (part.type === "file") {
+      const ext = extname(part.filename || "").toLowerCase();
+      if (!ALLOWED_PHOTO.has(ext)) {
+        await part.toBuffer().catch(() => {});
+        return reply.code(400).send({ error: "photo type not allowed" });
+      }
+      fileBuf = await part.toBuffer();
+      fileName = part.filename;
+      if (fileBuf.length > PHOTO_MAX) {
+        return reply.code(400).send({ error: "too large", maxBytes: PHOTO_MAX });
+      }
+    } else if (part.fieldname === "kind") {
+      kind = part.value;
+    } else if (part.fieldname === "carSlug") {
+      carSlug = part.value;
+    } else if (part.fieldname === "entryId") {
+      entryId = part.value;
+    }
+  }
+  if (!fileBuf || !carSlug || !kind) return reply.code(400).send({ error: "missing fields" });
+  if (kind !== "build" && kind !== "gallery") return reply.code(400).send({ error: "bad kind" });
+
+  const data = await readJson(DRIFT_DATA, {});
+  const car = (data.cars || []).find((c) => c.slug === carSlug);
+  if (!car) return reply.code(404).send({ error: "car not found" });
+  if (!Array.isArray(car.buildHistory)) car.buildHistory = [];
+  if (!Array.isArray(car.gallery)) car.gallery = [];
+
+  const dir = join(PHOTO_DIR, "cars");
+  await mkdir(dir, { recursive: true });
+  const stamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
+  const original = `${kind}-${carSlug}--${stamp}-${fileName}`;
+  const fname = uniqueName(dir, original);
+  await writeFile(join(dir, fname), fileBuf);
+  const url = `/photos/cars/${fname}`;
+
+  if (kind === "build") {
+    if (!entryId) return reply.code(400).send({ error: "entryId required for build" });
+    const target = car.buildHistory.find((x) => x.id === entryId);
+    if (!target) return reply.code(404).send({ error: "entry not found" });
+    if (target.photoUrl && target.photoUrl.startsWith("/photos/cars/")) {
+      await unlink(join(PUB, target.photoUrl)).catch(() => {});
+    }
+    target.photoUrl = url;
+  } else {
+    car.gallery.push(url);
+  }
+  await writeJson(DRIFT_DATA, data);
+  await logUpload(req.adminUser, "car-" + kind + "-photo", carSlug, fname, fileBuf.length);
+  return { ok: true, url };
 });
 
 app.delete("/admin/api/cars/:id", { preHandler: requireAuth }, async (req, reply) => {
