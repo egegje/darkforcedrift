@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="ru" data-variant="paddock">
+<head>
+<meta charset="utf-8">
+<title>Tickets — Paddock — drift.eg.je</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared.css?v=brand3">
+<link rel="stylesheet" href="paddock.css">
+<link rel="stylesheet" href="../mobile-overrides.css?v=mobile5">
+<style>
+  .tk-lede {
+    color: rgba(255,255,255,0.78); font-size:15px; line-height:1.6; max-width:60ch;
+    margin-top:18px;
+  }
+
+  .tk-grid { display:grid; grid-template-columns:1fr; gap:20px; margin-top:32px; }
+  @media (min-width: 800px) { .tk-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1100px) { .tk-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .tk-card {
+    background:#0f0f10; border:1px solid #2a2a2c;
+    display:flex; flex-direction:column; position:relative; overflow:hidden;
+  }
+  .tk-card__head {
+    padding:20px 22px 16px;
+    border-bottom:1px dashed #2a2a2c;
+    display:flex; align-items:center; gap:18px;
+  }
+  .tk-card__date {
+    font-family:'Bebas Neue', sans-serif;
+    font-size:64px; line-height:0.85; color: var(--accent);
+    letter-spacing:0.02em; flex-shrink:0;
+  }
+  .tk-card__date small {
+    display:block; font-family:'JetBrains Mono', monospace;
+    font-size:11px; letter-spacing:0.18em; color: rgba(255,255,255,0.55);
+    margin-top:6px;
+  }
+  .tk-card__where {
+    flex:1; min-width:0;
+  }
+  .tk-card__track {
+    font-family: var(--font-display, 'Oswald', sans-serif);
+    font-size:20px; letter-spacing:0.02em; text-transform:uppercase; color:#fff;
+    line-height:1.1;
+  }
+  .tk-card__city {
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.18em;
+    color: rgba(255,255,255,0.55); text-transform:uppercase;
+    margin-top:6px;
+  }
+  .tk-card__body { padding:16px 22px; display:flex; flex-direction:column; gap:14px; flex:1; }
+  .tk-card__copy { color: rgba(255,255,255,0.78); font-size:13px; line-height:1.55; }
+  .tk-card__remain {
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.18em;
+    color: rgba(255,255,255,0.55); text-transform:uppercase;
+    display:flex; align-items:center; gap:8px;
+  }
+  .tk-card__remain::before {
+    content:''; display:inline-block; width:8px; height:8px; background: var(--accent);
+  }
+  .tk-card__foot {
+    margin-top:auto; padding:16px 22px; border-top:1px solid #2a2a2c;
+    display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;
+  }
+  .tk-card__price {
+    font-family:'Bebas Neue', sans-serif; font-size:32px; line-height:1;
+    color:#fff; letter-spacing:0.02em;
+  }
+  .tk-card__price small {
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.18em;
+    color: rgba(255,255,255,0.55); margin-left:6px; vertical-align:5px;
+  }
+  .tk-card__tape {
+    position:absolute; top:14px; right:14px;
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.18em;
+    background: var(--accent); color: var(--accent-ink);
+    padding:4px 8px; text-transform:uppercase;
+  }
+
+  .tk-notify {
+    margin-top:42px; background:#0f0f10; border:1px solid #2a2a2c; padding:24px;
+  }
+  .tk-notify__head {
+    display:flex; align-items:baseline; justify-content:space-between;
+    gap:12px; flex-wrap:wrap; margin-bottom:18px;
+  }
+  .tk-notify__title {
+    font-family: var(--font-display, 'Oswald', sans-serif);
+    font-size:24px; letter-spacing:0.02em; text-transform:uppercase; color:#fff; margin:0;
+  }
+  .tk-notify__meta {
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.18em;
+    color: rgba(255,255,255,0.55); text-transform:uppercase;
+  }
+  .tk-notify__form { display:flex; gap:12px; flex-wrap:wrap; }
+  .tk-notify__form input {
+    flex:1 1 240px; min-width:0;
+    background:#1a1a1c; border:1px solid #2a2a2c; padding:12px 14px;
+    color:#fff; font-family:'Manrope', system-ui, sans-serif; font-size:14px;
+    border-radius:0; transition:border-color .15s;
+  }
+  .tk-notify__form input:focus { outline:none; border-color: var(--accent); }
+
+  .tk-rules {
+    margin-top:24px;
+    border:1px dashed rgba(255,255,255,0.18); padding:18px 20px;
+    color: rgba(255,255,255,0.55); font-size:12px; line-height:1.6;
+    font-family:'JetBrains Mono', monospace; letter-spacing:0.04em;
+  }
+</style>
+</head>
+<body class="pad-body">
+
+<div class="pad-strip"></div>
+
+<header class="topbar">
+  <div class="topbar__inner">
+    <a class="brand brand--stack" href="../index.html" aria-label="Dark Force">
+      <svg class="monster-head" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6">
+        <path d="M4 4 L14 10 L24 4 L22 16 L26 22 L14 26 L2 22 L6 16 Z" fill="var(--accent)" stroke="none"/>
+      </svg>
+      <span class="brand__wordmark">DARK <b>FORCE</b></span>
+    </a>
+    <nav class="nav">
+      <a href="home.html">Home</a>
+      <a href="team.html">Team</a>
+      <a href="drivers.html">Drivers</a>
+      <a href="calendar.html">Calendar</a>
+      <a href="tracks.html">Tracks</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="shop.html">Shop</a>
+      <a href="merch.html">Merch</a>
+      <a href="sponsors.html">Sponsors</a>
+      <a href="coaching.html">Coaching</a>
+      <a class="active" href="tickets.html">Tickets</a>
+      <a href="prints.html">Prints</a>
+      <a href="inner-circle.html">Inner</a>
+      <a href="courses.html">Courses</a>
+    </nav>
+    <div class="topbar__right">
+      <a class="btn btn--primary" href="#tk-notify">Подписаться</a>
+    </div>
+  </div>
+</header>
+
+<section class="pad-section">
+  <div class="pad-section__head">
+    <span class="num">12</span>
+    <h2>Tickets</h2>
+    <span class="meta">DRIFT-DAYS<br>+ SHOWS</span>
+  </div>
+
+  <p class="tk-lede">
+    Билеты на дрифт-дни и шоу Dark Force. QR на входе. Возврат за 48 часов до старта.
+  </p>
+
+  <div class="tk-grid" id="tk-grid">
+    <!-- Populated client-side -->
+  </div>
+
+  <div class="tk-rules">
+    QR-код приходит на email сразу после оплаты. Возврат — за 48 часов до начала ивента, без вопросов. Дети до 7 лет — бесплатно с сопровождающим. На трассу — закрытая обувь обязательна.
+  </div>
+
+  <div id="tk-notify" class="tk-notify">
+    <div class="tk-notify__head">
+      <h2 class="tk-notify__title">Подписаться на анонсы</h2>
+      <span class="tk-notify__meta">Уведомим о новых датах раньше всех</span>
+    </div>
+    <form class="tk-notify__form" method="POST" action="mailto:darkforcedrift@gmail.com?subject=Подписка%20на%20анонсы" enctype="text/plain">
+      <input type="email" name="email" required placeholder="Твой email">
+      <button type="submit" class="btn btn--primary">Подписаться →</button>
+    </form>
+  </div>
+
+</section>
+
+<footer class="pad-footer">
+  <div class="pad-footer__mono">
+    <span>© 2026 DRIFT.EG.JE</span>
+    <span>Paddock variant · tickets</span>
+  </div>
+</footer>
+
+<script>
+window.DRIFT_TWEAKS = /*EDITMODE-BEGIN*/{
+  "accent": "orange",
+  "density": "comfy",
+  "motion": true,
+  "hero": "video",
+  "lang": "ru"
+}/*EDITMODE-END*/;
+</script>
+<script src="../drift-data.js"></script>
+<script src="../shared.js"></script>
+<script>
+(function () {
+  function esc(s) { return String(s == null ? '' : s).replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])); }
+  function enc(s) { return encodeURIComponent(String(s == null ? '' : s)); }
+
+  var data = window.DRIFT_DATA || {};
+  var events = data.events || data.calendar || [];
+
+  // Hardcoded fallback if no event data is published yet.
+  if (!Array.isArray(events) || events.length === 0) {
+    events = [
+      { day:'14', month:'06', name:'Дрифт-день · Игора Драйв', track:'Igora Drive', city:'Ленобласть',
+        desc:'Открытая площадка, 4 заезда подряд, ленты онбордовых видео. Подходит и зрителям, и катающим.',
+        price:1500, total:200, sold:153, hot:false },
+      { day:'28', month:'06', name:'Открытая тренировка · Krylatskoye', track:'Крылатское', city:'Москва',
+        desc:'Тренировочный день для тех, кто только встал на боком. Пилоты команды на трассе, можно подсмотреть.',
+        price:800, total:120, sold:71, hot:false },
+      { day:'12', month:'07', name:'Шоу-заезд · Дни Города СПб', track:'Дворцовая площадь', city:'Санкт-Петербург',
+        desc:'Парадный шоу-заезд команды Dark Force в рамках Дней Города. Ограниченное количество гостевых билетов.',
+        price:2500, total:500, sold:312, hot:true }
+    ];
+  }
+
+  var host = document.getElementById('tk-grid');
+  if (!host) return;
+
+  host.innerHTML = events.map(function (e) {
+    var remain = (e.total != null && e.sold != null) ? (e.total - e.sold) : null;
+    var remainTxt = remain != null ? ('Осталось ' + remain + ' из ' + e.total) : '';
+    var subj = 'Билет: ' + e.name;
+    return '' +
+      '<article class="tk-card">' +
+        (e.hot ? '<span class="tk-card__tape">HOT</span>' : '') +
+        '<div class="tk-card__head">' +
+          '<div class="tk-card__date">' + esc(e.day) + ' / ' + esc(e.month) + '<small>' + esc(e.dayLabel || 'дата') + '</small></div>' +
+          '<div class="tk-card__where">' +
+            '<div class="tk-card__track">' + esc(e.track || e.name) + '</div>' +
+            '<div class="tk-card__city">' + esc(e.city || '') + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="tk-card__body">' +
+          '<p class="tk-card__copy">' + esc(e.desc || '') + '</p>' +
+          (remainTxt ? '<div class="tk-card__remain">' + esc(remainTxt) + '</div>' : '') +
+        '</div>' +
+        '<div class="tk-card__foot">' +
+          '<div class="tk-card__price">' + esc(e.price) + ' ₽<small>/ билет</small></div>' +
+          '<a class="btn btn--primary" href="mailto:darkforcedrift@gmail.com?subject=' + enc(subj) + '&body=' + enc('Хочу билет на: ' + e.name + '. Имя: \nКоличество: \nTelegram/email для QR: ') + '">Купить билет →</a>' +
+        '</div>' +
+      '</article>';
+  }).join('');
+})();
+</script>
+</body>
+</html>

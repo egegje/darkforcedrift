@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="ru" data-variant="paddock">
+<head>
+<meta charset="utf-8">
+<title>Prints — Paddock — drift.eg.je</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared.css?v=brand3">
+<link rel="stylesheet" href="paddock.css">
+<link rel="stylesheet" href="../mobile-overrides.css?v=mobile5">
+<style>
+  .pr-lede {
+    color: rgba(255,255,255,0.78); font-size:15px; line-height:1.6; max-width:60ch;
+    margin-top:18px;
+  }
+
+  .pr-grid { display:grid; grid-template-columns:1fr; gap:18px; margin-top:32px; }
+  @media (min-width: 700px) { .pr-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1100px) { .pr-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .pr-card {
+    background:#0f0f10; border:1px solid #2a2a2c;
+    display:flex; flex-direction:column; position:relative; overflow:hidden;
+  }
+  .pr-card__photo {
+    aspect-ratio: 1/1; background:#0a0a0b; position:relative; overflow:hidden;
+    border-bottom:1px solid #2a2a2c;
+  }
+  .pr-card__photo img {
+    position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block;
+  }
+  .pr-card__photo--placeholder {
+    background:
+      repeating-linear-gradient(45deg, transparent 0 14px, rgba(255,255,255,0.03) 14px 28px);
+    border:1px dashed rgba(255,255,255,0.18); border-bottom:1px dashed rgba(255,255,255,0.18);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .pr-card__placeholder-label {
+    font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.22em;
+    color: rgba(255,255,255,0.4); text-transform:uppercase;
+  }
+  .pr-card__tape {
+    position:absolute; top:14px; left:14px;
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.18em;
+    background: var(--accent); color: var(--accent-ink);
+    padding:4px 8px; text-transform:uppercase;
+  }
+  .pr-card__id {
+    position:absolute; bottom:14px; left:14px;
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.18em;
+    color: rgba(255,255,255,0.7); text-transform:uppercase;
+    background: rgba(0,0,0,0.55); padding:4px 8px;
+  }
+
+  .pr-card__body { padding:16px 20px 18px; display:flex; flex-direction:column; gap:12px; flex:1; }
+  .pr-card__sub {
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.18em;
+    color: rgba(255,255,255,0.55); text-transform:uppercase;
+  }
+  .pr-card__row {
+    display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+  }
+  .pr-card__row label {
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.18em;
+    color: rgba(255,255,255,0.55); text-transform:uppercase;
+  }
+  .pr-card__row select {
+    background:#1a1a1c; border:1px solid #2a2a2c; padding:8px 10px;
+    color:#fff; font-family:'JetBrains Mono', monospace; font-size:12px;
+    border-radius:0; transition:border-color .15s;
+  }
+  .pr-card__row select:focus { outline:none; border-color: var(--accent); }
+  .pr-card__price {
+    font-family:'Bebas Neue', sans-serif; font-size:30px; line-height:1;
+    color: var(--accent); letter-spacing:0.02em;
+    margin-left:auto;
+  }
+  .pr-card__cta { margin-top:auto; padding-top:6px; }
+
+  .pr-info {
+    margin-top:42px;
+    border:1px dashed rgba(255,255,255,0.18); padding:22px 24px;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent 0 16px,
+      rgba(255,255,255,0.02) 16px 32px
+    );
+  }
+  .pr-info__title {
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.22em;
+    color: rgba(255,255,255,0.55); text-transform:uppercase; margin-bottom:14px;
+  }
+  .pr-info__grid {
+    display:grid; grid-template-columns: 1fr; gap:14px;
+  }
+  @media (min-width: 700px) { .pr-info__grid { grid-template-columns: repeat(3, 1fr); } }
+  .pr-info__item {
+    border-left:2px solid var(--accent); padding:6px 0 6px 14px;
+  }
+  .pr-info__item dt {
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.18em;
+    color: rgba(255,255,255,0.55); text-transform:uppercase; margin-bottom:6px;
+  }
+  .pr-info__item dd { margin:0; color:#fff; font-size:14px; line-height:1.5; }
+</style>
+</head>
+<body class="pad-body">
+
+<div class="pad-strip"></div>
+
+<header class="topbar">
+  <div class="topbar__inner">
+    <a class="brand brand--stack" href="../index.html" aria-label="Dark Force">
+      <svg class="monster-head" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6">
+        <path d="M4 4 L14 10 L24 4 L22 16 L26 22 L14 26 L2 22 L6 16 Z" fill="var(--accent)" stroke="none"/>
+      </svg>
+      <span class="brand__wordmark">DARK <b>FORCE</b></span>
+    </a>
+    <nav class="nav">
+      <a href="home.html">Home</a>
+      <a href="team.html">Team</a>
+      <a href="drivers.html">Drivers</a>
+      <a href="calendar.html">Calendar</a>
+      <a href="tracks.html">Tracks</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="shop.html">Shop</a>
+      <a href="merch.html">Merch</a>
+      <a href="sponsors.html">Sponsors</a>
+      <a href="coaching.html">Coaching</a>
+      <a href="tickets.html">Tickets</a>
+      <a class="active" href="prints.html">Prints</a>
+      <a href="inner-circle.html">Inner</a>
+      <a href="courses.html">Courses</a>
+    </nav>
+    <div class="topbar__right">
+      <a class="btn btn--primary" href="#pr-grid">Заказать</a>
+    </div>
+  </div>
+</header>
+
+<section class="pad-section">
+  <div class="pad-section__head">
+    <span class="num">13</span>
+    <h2>Prints</h2>
+    <span class="meta">PRINTS FROM<br>THE GALLERY</span>
+  </div>
+
+  <p class="pr-lede">
+    Печать кадров команды. Из галереи Dark Force. А3 для гаража, А2 для коридора.
+  </p>
+
+  <div class="pr-grid" id="pr-grid">
+    <!-- Populated client-side -->
+  </div>
+
+  <div class="pr-info">
+    <div class="pr-info__title">Как это работает</div>
+    <dl class="pr-info__grid">
+      <div class="pr-info__item">
+        <dt>Печать</dt>
+        <dd>Через любой партнёрский фотосалон Санкт-Петербурга. Бумага плотная матовая или сатин.</dd>
+      </div>
+      <div class="pr-info__item">
+        <dt>Доставка</dt>
+        <dd>По России 3–7 дней. Курьер по СПб — в день готовности.</dd>
+      </div>
+      <div class="pr-info__item">
+        <dt>Срок изготовления</dt>
+        <dd>2 дня от подтверждения заказа.</dd>
+      </div>
+    </dl>
+  </div>
+
+</section>
+
+<footer class="pad-footer">
+  <div class="pad-footer__mono">
+    <span>© 2026 DRIFT.EG.JE</span>
+    <span>Paddock variant · prints</span>
+  </div>
+</footer>
+
+<script>
+window.DRIFT_TWEAKS = /*EDITMODE-BEGIN*/{
+  "accent": "orange",
+  "density": "comfy",
+  "motion": true,
+  "hero": "video",
+  "lang": "ru"
+}/*EDITMODE-END*/;
+</script>
+<script src="../drift-data.js"></script>
+<script src="../gallery-data.js"></script>
+<script src="../shared.js"></script>
+<script>
+(function () {
+  function esc(s) { return String(s == null ? '' : s).replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])); }
+  function enc(s) { return encodeURIComponent(String(s == null ? '' : s)); }
+
+  var PRICES = { 'А4': 800, 'А3': 1500, 'А2': 3000 };
+
+  var photos = [];
+  if (Array.isArray(window.GALLERY_DATA)) {
+    photos = window.GALLERY_DATA
+      .filter(function (g) { return g && g.kind === 'photo' && g.url; })
+      .slice(0, 6);
+  }
+
+  // Fallback: 6 placeholder cards
+  if (photos.length === 0) {
+    photos = [];
+    for (var i = 1; i <= 6; i++) {
+      photos.push({ id: 'placeholder-' + i, filename: 'PHOTO ' + i, url: '/photos/placeholder-' + i + '.jpg', placeholder: true });
+    }
+  }
+
+  var host = document.getElementById('pr-grid');
+  if (!host) return;
+
+  host.innerHTML = photos.map(function (p, idx) {
+    var photoId = (p.id || ('photo-' + (idx + 1))).slice(0, 12);
+    var img = p.placeholder
+      ? '<div class="pr-card__photo pr-card__photo--placeholder">' +
+          '<span class="pr-card__tape">PRINT</span>' +
+          '<span class="pr-card__placeholder-label">' + esc(p.filename || ('PHOTO ' + (idx + 1))) + '</span>' +
+          '<span class="pr-card__id">ID · ' + esc(photoId) + '</span>' +
+        '</div>'
+      : '<div class="pr-card__photo">' +
+          '<span class="pr-card__tape">PRINT</span>' +
+          '<img src="' + esc(p.url) + '" alt="Dark Force — ' + esc(p.filename || photoId) + '" loading="lazy">' +
+          '<span class="pr-card__id">ID · ' + esc(photoId) + '</span>' +
+        '</div>';
+
+    var sizes = Object.keys(PRICES);
+    var defaultSize = 'А3';
+    var defaultPrice = PRICES[defaultSize];
+
+    var subjBase = 'Print order: ' + photoId;
+    var bodyBase = 'Хочу заказать печать.\nID: ' + photoId + '\nРазмер: ' + defaultSize + '\nИмя: \nАдрес доставки: ';
+
+    return '' +
+      '<article class="pr-card" data-pid="' + esc(photoId) + '">' +
+        img +
+        '<div class="pr-card__body">' +
+          '<div class="pr-card__sub">DARK FORCE · GALLERY</div>' +
+          '<div class="pr-card__row">' +
+            '<label for="size-' + idx + '">Размер</label>' +
+            '<select id="size-' + idx + '" data-idx="' + idx + '" class="pr-size">' +
+              sizes.map(function (s) { return '<option value="' + s + '"' + (s === defaultSize ? ' selected' : '') + '>' + s + ' · ' + PRICES[s] + ' ₽</option>'; }).join('') +
+            '</select>' +
+            '<div class="pr-card__price" data-price-for="' + idx + '">' + defaultPrice + ' ₽</div>' +
+          '</div>' +
+          '<div class="pr-card__cta">' +
+            '<a class="btn btn--primary" data-cta-for="' + idx + '" href="mailto:darkforcedrift@gmail.com?subject=' + enc(subjBase + ', size: ' + defaultSize) + '&body=' + enc(bodyBase) + '" style="display:block;text-align:center">Заказать →</a>' +
+          '</div>' +
+        '</div>' +
+      '</article>';
+  }).join('');
+
+  // Hook size changes to update price label and mailto link
+  host.querySelectorAll('.pr-size').forEach(function (sel) {
+    sel.addEventListener('change', function () {
+      var idx = sel.getAttribute('data-idx');
+      var size = sel.value;
+      var price = PRICES[size];
+      var card = sel.closest('.pr-card');
+      var pid = card ? card.getAttribute('data-pid') : '';
+      var priceEl = host.querySelector('[data-price-for="' + idx + '"]');
+      var ctaEl = host.querySelector('[data-cta-for="' + idx + '"]');
+      if (priceEl) priceEl.textContent = price + ' ₽';
+      if (ctaEl) {
+        var subj = 'Print order: ' + pid + ', size: ' + size;
+        var body = 'Хочу заказать печать.\nID: ' + pid + '\nРазмер: ' + size + '\nИмя: \nАдрес доставки: ';
+        ctaEl.href = 'mailto:darkforcedrift@gmail.com?subject=' + enc(subj) + '&body=' + enc(body);
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>
