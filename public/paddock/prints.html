@@ -147,9 +147,7 @@
     <span class="meta">PRINTS FROM<br>THE GALLERY</span>
   </div>
 
-  <p class="pr-lede">
-    Печать кадров команды. Из галереи Dark Force. А3 для гаража, А2 для коридора.
-  </p>
+  <p class="pr-lede" id="pr-lede"></p>
 
   <div class="pr-grid" id="pr-grid">
     <!-- Populated client-side -->
@@ -157,20 +155,7 @@
 
   <div class="pr-info">
     <div class="pr-info__title">Как это работает</div>
-    <dl class="pr-info__grid">
-      <div class="pr-info__item">
-        <dt>Печать</dt>
-        <dd>Через любой партнёрский фотосалон Санкт-Петербурга. Бумага плотная матовая или сатин.</dd>
-      </div>
-      <div class="pr-info__item">
-        <dt>Доставка</dt>
-        <dd>По России 3–7 дней. Курьер по СПб — в день готовности.</dd>
-      </div>
-      <div class="pr-info__item">
-        <dt>Срок изготовления</dt>
-        <dd>2 дня от подтверждения заказа.</dd>
-      </div>
-    </dl>
+    <dl class="pr-info__grid" id="pr-info-grid"></dl>
   </div>
 
 </section>
@@ -199,7 +184,32 @@ window.DRIFT_TWEAKS = /*EDITMODE-BEGIN*/{
   function esc(s) { return String(s == null ? '' : s).replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])); }
   function enc(s) { return encodeURIComponent(String(s == null ? '' : s)); }
 
-  var PRICES = { 'А4': 800, 'А3': 1500, 'А2': 3000 };
+  var data = window.DRIFT_DATA || {};
+  var PR = data.prints || null;
+
+  // Lede
+  var ledeEl = document.getElementById('pr-lede');
+  if (ledeEl) ledeEl.textContent = (PR && PR.lede) || 'Печать кадров команды. Из галереи Dark Force. А3 для гаража, А2 для коридора.';
+
+  // Info block
+  var infoGrid = document.getElementById('pr-info-grid');
+  if (infoGrid) {
+    var info = (PR && PR.info) || [
+      { title: 'Печать', body: 'Через любой партнёрский фотосалон Санкт-Петербурга.' },
+      { title: 'Доставка', body: 'По России 3–7 дней.' },
+      { title: 'Срок изготовления', body: '2 дня от подтверждения.' }
+    ];
+    infoGrid.innerHTML = info.map(function (i) {
+      return '<div class="pr-info__item"><dt>' + esc(i.title || '') + '</dt><dd>' + esc(i.body || '') + '</dd></div>';
+    }).join('');
+  }
+
+  var sizesArr = (PR && Array.isArray(PR.sizes) && PR.sizes.length) ? PR.sizes : [
+    { label: 'А4', price: 800 }, { label: 'А3', price: 1500 }, { label: 'А2', price: 3000 }
+  ];
+  var PRICES = {};
+  sizesArr.forEach(function (s) { PRICES[s.label] = s.price; });
+  var contactEmail = (PR && PR.contactEmail) || 'darkforcedrift@gmail.com';
 
   var photos = [];
   if (Array.isArray(window.GALLERY_DATA)) {
@@ -253,7 +263,7 @@ window.DRIFT_TWEAKS = /*EDITMODE-BEGIN*/{
             '<div class="pr-card__price" data-price-for="' + idx + '">' + defaultPrice + ' ₽</div>' +
           '</div>' +
           '<div class="pr-card__cta">' +
-            '<a class="btn btn--primary" data-cta-for="' + idx + '" href="mailto:darkforcedrift@gmail.com?subject=' + enc(subjBase + ', size: ' + defaultSize) + '&body=' + enc(bodyBase) + '" style="display:block;text-align:center">Заказать →</a>' +
+            '<a class="btn btn--primary" data-cta-for="' + idx + '" href="mailto:' + esc(contactEmail) + '?subject=' + enc(subjBase + ', size: ' + defaultSize) + '&body=' + enc(bodyBase) + '" style="display:block;text-align:center">Заказать →</a>' +
           '</div>' +
         '</div>' +
       '</article>';
@@ -273,7 +283,7 @@ window.DRIFT_TWEAKS = /*EDITMODE-BEGIN*/{
       if (ctaEl) {
         var subj = 'Print order: ' + pid + ', size: ' + size;
         var body = 'Хочу заказать печать.\nID: ' + pid + '\nРазмер: ' + size + '\nИмя: \nАдрес доставки: ';
-        ctaEl.href = 'mailto:darkforcedrift@gmail.com?subject=' + enc(subj) + '&body=' + enc(body);
+        ctaEl.href = 'mailto:' + esc(contactEmail) + '?subject=' + enc(subj) + '&body=' + enc(body);
       }
     });
   });

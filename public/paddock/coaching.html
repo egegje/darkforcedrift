@@ -161,33 +161,9 @@
     <span class="meta">SESSIONS WITH<br>DARK FORCE PILOTS</span>
   </div>
 
-  <p style="color:rgba(255,255,255,0.78); font-size:15px; line-height:1.6; max-width:60ch; margin-top:18px">
-    Урок дрифта 1-на-1 с пилотом команды Dark Force. Реальная трасса, твоя машина или машина пилота, ленты онбордовых видео, разбор ошибок прямо после заезда. Подходит и тем, кто только встал на боком, и тем, кто хочет шагнуть из любителя в полупрофи.
-  </p>
+  <p id="co-intro" style="color:rgba(255,255,255,0.78); font-size:15px; line-height:1.6; max-width:60ch; margin-top:18px"></p>
 
-  <div class="co-tier-row">
-    <div class="co-tier">
-      <div class="co-tier__name">Intro · 60 мин</div>
-      <div class="co-tier__price">8 000 ₽<small>/ сессия</small></div>
-      <div class="co-tier__copy">
-        Знакомство с дрифтом, базовые упражнения (заход в управляемый занос, удержание угла), теория. Идеально для новичка.
-      </div>
-    </div>
-    <div class="co-tier" style="border-color: var(--accent)">
-      <div class="co-tier__name">Standard · 90 мин</div>
-      <div class="co-tier__price">12 000 ₽<small>/ сессия</small></div>
-      <div class="co-tier__copy">
-        90 минут практики, прохождение конкретной трассы или обвязки, разбор онбордки после каждого захода. Большинство клиентов берут именно этот формат.
-      </div>
-    </div>
-    <div class="co-tier">
-      <div class="co-tier__name">Pro · день</div>
-      <div class="co-tier__price">35 000 ₽<small>/ день</small></div>
-      <div class="co-tier__copy">
-        Полный день с пилотом — сборка машины утром, тренировка с разбором каждого заезда, видеоанализ вечером. Для тех, кто готовится к соревнованию.
-      </div>
-    </div>
-  </div>
+  <div class="co-tier-row" id="co-tier-row"></div>
 
   <h3 style="margin-top:42px;font-family:var(--font-display, 'Oswald', sans-serif);font-size:22px;letter-spacing:0.04em;text-transform:uppercase;color:#fff">Пилоты-инструкторы</h3>
 
@@ -271,16 +247,69 @@ window.DRIFT_TWEAKS = /*EDITMODE-BEGIN*/{
 <script src="../shared.js"></script>
 <script>
 (function () {
-  function esc(s) { return String(s == null ? '' : s).replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c])); }
   var data = window.DRIFT_DATA || {};
+  var CO = data.coaching || {};
+
+  // Intro paragraph
+  var introEl = document.getElementById('co-intro');
+  if (introEl) introEl.textContent = CO.intro || 'Урок дрифта 1-на-1 с пилотом команды Dark Force.';
+
+  // Format tier cards
+  var tierRow = document.getElementById('co-tier-row');
+  var formats = CO.formats || [];
+  if (formats.length === 0) {
+    formats = [
+      { name: 'Intro · 60 мин', price: '8 000 ₽', period: '/ сессия', copy: 'Знакомство с дрифтом.', featured: false },
+      { name: 'Standard · 90 мин', price: '12 000 ₽', period: '/ сессия', copy: '90 минут практики.', featured: true },
+      { name: 'Pro · день', price: '35 000 ₽', period: '/ день', copy: 'Полный день с пилотом.', featured: false }
+    ];
+  }
+  if (tierRow) {
+    tierRow.innerHTML = formats.map(function (t) {
+      var style = t.featured ? ' style="border-color: var(--accent)"' : '';
+      return '<div class="co-tier"' + style + '>' +
+        '<div class="co-tier__name">' + esc(t.name) + '</div>' +
+        '<div class="co-tier__price">' + esc(t.price) + (t.period ? '<small>' + esc(t.period) + '</small>' : '') + '</div>' +
+        '<div class="co-tier__copy">' + esc(t.copy || '') + '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  // Format <select> in the booking form
+  var formatSel = document.querySelector('select[name="format"]');
+  if (formatSel && formats.length) {
+    formatSel.innerHTML = formats.map(function (t) {
+      return '<option value="' + esc(t.id || t.name) + '"' + (t.featured ? ' selected' : '') + '>' +
+        esc(t.name) + ' · ' + esc(t.price) + '</option>';
+    }).join('') + '<option value="custom">Кастомный формат</option>';
+  }
+
+  // Email/Telegram contact swap
+  if (CO.contactEmail) {
+    document.querySelectorAll('a[href^="mailto:"], form[action^="mailto:"]').forEach(function (el) {
+      var attr = el.tagName === 'A' ? 'href' : 'action';
+      var url = el.getAttribute(attr) || '';
+      el.setAttribute(attr, url.replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/, CO.contactEmail));
+    });
+  }
+  if (CO.contactTelegram) {
+    document.querySelectorAll('a[href^="https://t.me/"]').forEach(function (el) {
+      el.setAttribute('href', CO.contactTelegram);
+      if (CO.contactTelegramLabel && el.classList.contains('co-form__hint')) {
+        el.textContent = CO.contactTelegramLabel;
+      }
+    });
+  }
+
+  // Pilot grid
   var drivers = (data.drivers || []).filter(function (d) {
-    // Only locals (Russia / RU drivers) take coaching bookings; FD pilots
-    // and visiting champions are showcase-only.
     return d.country === 'Russia' || d.category === 'local' || d.category === 'team';
   }).slice(0, 6);
-
-  // If we couldn't detect locals, fall back to first 4 drivers.
   if (drivers.length === 0) drivers = (data.drivers || []).slice(0, 4);
+
+  var rateFrom = CO.pilotRateFrom || 'от 12 000 ₽';
+  var ratePeriod = CO.pilotRatePeriod || '/ сессия';
 
   var host = document.getElementById('co-pilots-grid');
   if (!host) return;
@@ -305,7 +334,7 @@ window.DRIFT_TWEAKS = /*EDITMODE-BEGIN*/{
             '<div><dt>Мощность</dt><dd>' + esc(hp) + '</dd></div>' +
           '</dl>' +
           '<div class="co-pilot__rate">' +
-            '<strong>от 12 000 ₽</strong><span>/ сессия</span>' +
+            '<strong>' + esc(rateFrom) + '</strong><span>' + esc(ratePeriod) + '</span>' +
           '</div>' +
           '<div class="co-pilot__cta">' +
             '<a class="btn btn--primary" href="#co-book" onclick="document.querySelector(&quot;[name=pilot]&quot;).value=&quot;' + esc(d.name) + '&quot;" style="display:block;text-align:center">Записаться к нему →</a>' +

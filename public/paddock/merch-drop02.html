@@ -149,71 +149,10 @@
     <a class="d2-back" href="merch.html">← Drop 01</a>
   </div>
 
-  <h1 class="d2-lede">
-    Drop 02. Caps. Patches. Stickers.<br>
-    <em>Уже шьём. Уже клеим.</em>
-  </h1>
-  <p class="d2-sub">
-    Вторая капсула команды Dark Force. Снэпбеки с вышитой эмблемой Hannya, нашивки на куртку и рукав, лист виниловых стикеров для машины и шлема. Рендеры в работе — пока бронируй, заберёшь первым после релиза.
-  </p>
+  <h1 class="d2-lede" id="d2-lede"></h1>
+  <p class="d2-sub" id="d2-sub"></p>
 
-  <div class="d2-grid">
-
-    <article class="d2-card">
-      <div class="d2-card__preview">
-        <span class="d2-card__tape">PREORDER</span>
-        <div class="d2-card__preview-label">CAP MOCK</div>
-      </div>
-      <div class="d2-card__body">
-        <div class="d2-card__sub">DROP 02 · HEADWEAR</div>
-        <div class="d2-card__name">Dark Force Hannya Cap</div>
-        <p class="d2-card__copy">
-          Снэпбек чёрный матовый, плоский козырёк, вышитая эмблема Hannya на фронте. Изогнутый шеврон команды на задней панели. One size, регулируемый ремешок.
-        </p>
-        <div class="d2-card__foot">
-          <div class="d2-card__price">2 400 ₽</div>
-          <a class="btn btn--primary" href="mailto:darkforcedrift@gmail.com?subject=Drop%2002%20preorder&body=Hi%21%20Хочу%20забронировать%3A%20Dark%20Force%20Hannya%20Cap.%20Имя%3A%20%0ATelegram%2Femail%3A%20">ЗАБРОНИРОВАТЬ →</a>
-        </div>
-      </div>
-    </article>
-
-    <article class="d2-card">
-      <div class="d2-card__preview">
-        <span class="d2-card__tape">PREORDER</span>
-        <div class="d2-card__preview-label">PATCH MOCK</div>
-      </div>
-      <div class="d2-card__body">
-        <div class="d2-card__sub">DROP 02 · PATCHES</div>
-        <div class="d2-card__name">Hannya Patch Pack</div>
-        <p class="d2-card__copy">
-          Комплект из 3 нашивок: большая Hannya на спину куртки и 2 маленьких на рукав (логотип команды + flag). Вышивка плотная, термооснова + клей.
-        </p>
-        <div class="d2-card__foot">
-          <div class="d2-card__price">1 200 ₽</div>
-          <a class="btn btn--primary" href="mailto:darkforcedrift@gmail.com?subject=Drop%2002%20preorder&body=Hi%21%20Хочу%20забронировать%3A%20Hannya%20Patch%20Pack.%20Имя%3A%20%0ATelegram%2Femail%3A%20">ЗАБРОНИРОВАТЬ →</a>
-        </div>
-      </div>
-    </article>
-
-    <article class="d2-card">
-      <div class="d2-card__preview">
-        <span class="d2-card__tape">PREORDER</span>
-        <div class="d2-card__preview-label">STICKER MOCK</div>
-      </div>
-      <div class="d2-card__body">
-        <div class="d2-card__sub">DROP 02 · STICKERS</div>
-        <div class="d2-card__name">Sticker Sheet Drop 02</div>
-        <p class="d2-card__copy">
-          Лист 12 виниловых стикеров: для боковин машины, бампера, шлема, кейса. Уличный винил, держит мойку и солнце. Глянец + матовые акценты.
-        </p>
-        <div class="d2-card__foot">
-          <div class="d2-card__price">600 ₽</div>
-          <a class="btn btn--primary" href="mailto:darkforcedrift@gmail.com?subject=Drop%2002%20preorder&body=Hi%21%20Хочу%20забронировать%3A%20Sticker%20Sheet%20Drop%2002.%20Имя%3A%20%0ATelegram%2Femail%3A%20">ЗАБРОНИРОВАТЬ →</a>
-        </div>
-      </div>
-    </article>
-
-  </div>
+  <div class="d2-grid" id="d2-grid"></div>
 
   <div id="d2-notify" class="d2-notify">
     <div class="d2-notify__head">
@@ -246,5 +185,51 @@ window.DRIFT_TWEAKS = /*EDITMODE-BEGIN*/{
 </script>
 <script src="../drift-data.js"></script>
 <script src="../shared.js"></script>
+<script>
+(function () {
+  function esc(s) { return String(s == null ? '' : s).replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c])); }
+  function enc(s) { return encodeURIComponent(String(s == null ? '' : s)); }
+  var data = window.DRIFT_DATA || {};
+  var D2 = (data.merch && data.merch.dropTwo) || {};
+  var email = D2.notifyEmail || 'darkforcedrift@gmail.com';
+
+  var ledeEl = document.getElementById('d2-lede');
+  if (ledeEl) {
+    var accent = D2.ledeAccent ? '<em>' + esc(D2.ledeAccent) + '</em>' : '';
+    ledeEl.innerHTML = esc(D2.lede || 'Drop 02.') + (accent ? '<br>' + accent : '');
+  }
+  var subEl = document.getElementById('d2-sub');
+  if (subEl) subEl.textContent = D2.sub || '';
+
+  var grid = document.getElementById('d2-grid');
+  if (grid) {
+    grid.innerHTML = (D2.cards || []).map(function (c) {
+      var subj = enc('Drop 02 preorder');
+      var body = enc('Hi! Хочу забронировать: ' + (c.name || '') + '. Имя: \nTelegram/email: ');
+      return '<article class="d2-card">' +
+        '<div class="d2-card__preview">' +
+          '<span class="d2-card__tape">PREORDER</span>' +
+          '<div class="d2-card__preview-label">' + esc(c.previewLabel || '') + '</div>' +
+        '</div>' +
+        '<div class="d2-card__body">' +
+          '<div class="d2-card__sub">' + esc(c.sub || '') + '</div>' +
+          '<div class="d2-card__name">' + esc(c.name || '') + '</div>' +
+          '<p class="d2-card__copy">' + esc(c.copy || '') + '</p>' +
+          '<div class="d2-card__foot">' +
+            '<div class="d2-card__price">' + esc(c.price || '') + '</div>' +
+            '<a class="btn btn--primary" href="mailto:' + esc(email) + '?subject=' + subj + '&body=' + body + '">ЗАБРОНИРОВАТЬ →</a>' +
+          '</div>' +
+        '</div>' +
+      '</article>';
+    }).join('');
+  }
+
+  // Notify form action — replace mailto recipient
+  document.querySelectorAll('form[action^="mailto:"]').forEach(function (f) {
+    var url = f.getAttribute('action') || '';
+    f.setAttribute('action', url.replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/, email));
+  });
+})();
+</script>
 </body>
 </html>

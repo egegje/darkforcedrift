@@ -130,60 +130,7 @@
     <span class="meta">DROP 01<br>DARK FORCE</span>
   </div>
 
-  <div class="merch-grid">
-
-    <article class="merch-card merch-card--feature">
-      <div class="merch-card__shots">
-        <div class="merch-card__shot">
-          <span class="merch-card__tape">DROP 01</span>
-          <img src="merch/tshirt-front.jpg" alt="Dark Force tee — front">
-          <span class="merch-card__view-tag">FRONT · UNLEASH YOUR DEMONS</span>
-        </div>
-        <div class="merch-card__shot">
-          <img src="merch/tshirt-back.jpg" alt="Dark Force tee — back">
-          <span class="merch-card__view-tag">BACK · HANNYA / DRIFT TEAM</span>
-        </div>
-      </div>
-      <div class="merch-card__body">
-        <div class="merch-card__sub">DROP 01 · OVERSIZE TEE</div>
-        <div class="merch-card__name">Dark Force Hannya Tee</div>
-        <p class="merch-card__copy">
-          Plotted on heavyweight 240 g/m² oversize cotton in matte black. Front: chest call-out
-          “UNLEASH YOUR DEMONS” + RALEHIN tab at the collar. Back: full Hannya halo in
-          team yellow with the DARK FORCE / DRIFT TEAM block above.
-        </p>
-        <dl class="merch-card__meta">
-          <div><dt>Fabric</dt><dd>240 g/m² combed cotton</dd></div>
-          <div><dt>Cut</dt><dd>Oversize, drop shoulder</dd></div>
-          <div><dt>Print</dt><dd>Plotter vinyl, hand-pressed</dd></div>
-          <div><dt>Sizes</dt><dd>S · M · L · XL · XXL</dd></div>
-          <div><dt>Drop</dt><dd>01 · Limited run</dd></div>
-        </dl>
-        <div class="merch-card__foot">
-          <div class="merch-card__price">3 900 ₽<small>/ each</small></div>
-          <a class="btn btn--primary" href="https://t.me/darkforcedrift" target="_blank" rel="noopener">
-            Reserve via Telegram →
-          </a>
-        </div>
-      </div>
-    </article>
-
-    <div class="merch-soon">
-      <div class="merch-soon__title">Caps</div>
-      <div class="merch-soon__hint">DROP 02 · COMING</div>
-    </div>
-
-    <div class="merch-soon">
-      <div class="merch-soon__title">Patches</div>
-      <div class="merch-soon__hint">DROP 02 · COMING</div>
-    </div>
-
-    <div class="merch-soon">
-      <div class="merch-soon__title">Stickers</div>
-      <div class="merch-soon__hint">DROP 02 · COMING</div>
-    </div>
-
-  </div>
+  <div class="merch-grid" id="merch-grid"></div>
 </section>
 
 <footer class="pad-footer">
@@ -204,5 +151,61 @@ window.DRIFT_TWEAKS = /*EDITMODE-BEGIN*/{
 </script>
 <script src="../drift-data.js"></script>
 <script src="../shared.js"></script>
+<script>
+(function () {
+  function esc(s) { return String(s == null ? '' : s).replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c])); }
+  var data = window.DRIFT_DATA || {};
+  var M = (data.merch && data.merch.dropOne) || null;
+  var host = document.getElementById('merch-grid');
+  if (!host) return;
+  if (!M) {
+    M = {
+      sub: 'DROP 01 · OVERSIZE TEE', name: 'Dark Force Hannya Tee',
+      copy: 'Plotted on heavyweight 240 g/m² oversize cotton.',
+      fabric: '240 g/m² combed cotton', cut: 'Oversize', print: 'Plotter vinyl', sizes: 'S — XXL', drop: '01',
+      price: '3 900 ₽', priceUnit: '/ each',
+      telegramUrl: 'https://t.me/darkforcedrift', telegramLabel: 'Reserve via Telegram →',
+      soonTiles: [{title:'Caps',hint:'DROP 02 · COMING'},{title:'Patches',hint:'DROP 02 · COMING'},{title:'Stickers',hint:'DROP 02 · COMING'}]
+    };
+  }
+  var card =
+    '<article class="merch-card merch-card--feature">' +
+      '<div class="merch-card__shots">' +
+        '<div class="merch-card__shot">' +
+          '<span class="merch-card__tape">DROP 01</span>' +
+          '<img src="merch/tshirt-front.jpg" alt="Dark Force tee — front">' +
+          '<span class="merch-card__view-tag">FRONT · UNLEASH YOUR DEMONS</span>' +
+        '</div>' +
+        '<div class="merch-card__shot">' +
+          '<img src="merch/tshirt-back.jpg" alt="Dark Force tee — back">' +
+          '<span class="merch-card__view-tag">BACK · HANNYA / DRIFT TEAM</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="merch-card__body">' +
+        '<div class="merch-card__sub">' + esc(M.sub || '') + '</div>' +
+        '<div class="merch-card__name">' + esc(M.name || '') + '</div>' +
+        '<p class="merch-card__copy">' + esc(M.copy || '') + '</p>' +
+        '<dl class="merch-card__meta">' +
+          (M.fabric ? '<div><dt>Fabric</dt><dd>' + esc(M.fabric) + '</dd></div>' : '') +
+          (M.cut ? '<div><dt>Cut</dt><dd>' + esc(M.cut) + '</dd></div>' : '') +
+          (M.print ? '<div><dt>Print</dt><dd>' + esc(M.print) + '</dd></div>' : '') +
+          (M.sizes ? '<div><dt>Sizes</dt><dd>' + esc(M.sizes) + '</dd></div>' : '') +
+          (M.drop ? '<div><dt>Drop</dt><dd>' + esc(M.drop) + '</dd></div>' : '') +
+        '</dl>' +
+        '<div class="merch-card__foot">' +
+          '<div class="merch-card__price">' + esc(M.price || '') + (M.priceUnit ? '<small>' + esc(M.priceUnit) + '</small>' : '') + '</div>' +
+          '<a class="btn btn--primary" href="' + esc(M.telegramUrl || '#') + '" target="_blank" rel="noopener">' + esc(M.telegramLabel || 'Reserve →') + '</a>' +
+        '</div>' +
+      '</div>' +
+    '</article>';
+  var soon = (M.soonTiles || []).map(function (t) {
+    return '<div class="merch-soon">' +
+      '<div class="merch-soon__title">' + esc(t.title || '') + '</div>' +
+      '<div class="merch-soon__hint">' + esc(t.hint || '') + '</div>' +
+    '</div>';
+  }).join('');
+  host.innerHTML = card + soon;
+})();
+</script>
 </body>
 </html>

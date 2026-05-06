@@ -144,86 +144,17 @@
     <span class="meta">PRIVATE TG<br>CHANNEL</span>
   </div>
 
-  <h1 class="ic-lede">
-    Inner Circle.<br>
-    Закрытый Telegram-канал команды.<br>
-    <em>Эксклюзив, разборы, первые билеты.</em>
-  </h1>
-  <p class="ic-sub">
-    Закрытый канал для тех, кто хочет видеть команду изнутри: видео-разборы тренировок, GoPro-онбордки, первые билеты на ивенты, голосования по ливреям и мерчу.
-  </p>
+  <h1 class="ic-lede" id="ic-lede"></h1>
+  <p class="ic-sub" id="ic-sub"></p>
 
-  <div class="ic-tiers" id="ic-tiers">
-
-    <div class="ic-tier">
-      <div class="ic-tier__head">
-        <div class="ic-tier__name">Monthly</div>
-        <div class="ic-tier__sub">от месяца к месяцу</div>
-      </div>
-      <div class="ic-tier__price">
-        <strong>700 ₽</strong>
-        <span>/ мес</span>
-      </div>
-      <div class="ic-tier__save ic-tier__save--neutral">Все материалы канала</div>
-      <div class="ic-tier__copy">
-        Полный доступ ко всему, что выходит в этом месяце. Можно отписаться в любое время — без вопросов.
-      </div>
-      <div class="ic-tier__cta">
-        <a class="btn btn--secondary" href="mailto:darkforcedrift@gmail.com?subject=Inner%20Circle%20%C2%B7%20Monthly&body=Хочу%20подписку%20Inner%20Circle%20Monthly%20(700%20%E2%82%BD%2Fмес).%20Имя%3A%20%0ATelegram%3A%20" style="display:block;text-align:center">Подписаться →</a>
-      </div>
-    </div>
-
-    <div class="ic-tier ic-tier--featured">
-      <div class="ic-tier__head">
-        <div class="ic-tier__name">Half-year</div>
-        <div class="ic-tier__sub">6 месяцев одной оплатой</div>
-      </div>
-      <div class="ic-tier__price">
-        <strong>3 600 ₽</strong>
-        <span>/ полугодие</span>
-      </div>
-      <div class="ic-tier__save">Экономия 600 ₽</div>
-      <div class="ic-tier__copy">
-        Шесть месяцев по цене пяти с половиной. Этот тариф берут чаще всего — попадаешь сразу на пик сезона.
-      </div>
-      <div class="ic-tier__cta">
-        <a class="btn btn--primary" href="mailto:darkforcedrift@gmail.com?subject=Inner%20Circle%20%C2%B7%20Half-year&body=Хочу%20подписку%20Inner%20Circle%20Half-year%20(3%20600%20%E2%82%BD%2Fполугодие).%20Имя%3A%20%0ATelegram%3A%20" style="display:block;text-align:center">Подписаться →</a>
-      </div>
-    </div>
-
-    <div class="ic-tier">
-      <div class="ic-tier__head">
-        <div class="ic-tier__name">Annual</div>
-        <div class="ic-tier__sub">12 месяцев одной оплатой</div>
-      </div>
-      <div class="ic-tier__price">
-        <strong>6 800 ₽</strong>
-        <span>/ год</span>
-      </div>
-      <div class="ic-tier__save">Экономия 1 600 ₽ + sticker pack</div>
-      <div class="ic-tier__copy">
-        Годовой тариф со скидкой и лимитированным sticker pack команды. Отправим по почте сразу после оплаты.
-      </div>
-      <div class="ic-tier__cta">
-        <a class="btn btn--secondary" href="mailto:darkforcedrift@gmail.com?subject=Inner%20Circle%20%C2%B7%20Annual&body=Хочу%20годовую%20подписку%20Inner%20Circle%20(6%20800%20%E2%82%BD%2Fгод).%20Имя%3A%20%0ATelegram%3A%20%0AАдрес%20для%20sticker%20pack%3A%20" style="display:block;text-align:center">Подписаться →</a>
-      </div>
-    </div>
-
-  </div>
+  <div class="ic-tiers" id="ic-tiers"></div>
 
   <div class="ic-inside">
     <div class="ic-inside__head">
       <h2 class="ic-inside__title">Что внутри?</h2>
       <span class="ic-inside__meta">Только для подписчиков</span>
     </div>
-    <ul class="ic-inside__list">
-      <li>Видео-разборы каждой тренировки команды</li>
-      <li>Эксклюзивные онбордки с GoPro пилотов</li>
-      <li>Первые билеты на ивенты — раньше публичного старта продаж</li>
-      <li>Голосования по ливреям и мерчу команды</li>
-      <li>Прямые вопросы пилотам в чате (раз в неделю)</li>
-      <li>Скидка 15% на коучинг и мерч Dark Force</li>
-    </ul>
+    <ul class="ic-inside__list" id="ic-perks"></ul>
   </div>
 
 </section>
@@ -246,5 +177,53 @@ window.DRIFT_TWEAKS = /*EDITMODE-BEGIN*/{
 </script>
 <script src="../drift-data.js"></script>
 <script src="../shared.js"></script>
+<script>
+(function () {
+  function esc(s) { return String(s == null ? '' : s).replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c])); }
+  function enc(s) { return encodeURIComponent(String(s == null ? '' : s)); }
+  var data = window.DRIFT_DATA || {};
+  var IC = data.innerCircle || {};
+  var email = IC.contactEmail || 'darkforcedrift@gmail.com';
+
+  var ledeEl = document.getElementById('ic-lede');
+  if (ledeEl) {
+    var parts = [];
+    if (IC.lede) parts.push(esc(IC.lede));
+    if (IC.lede2) parts.push(esc(IC.lede2));
+    if (IC.ledeAccent) parts.push('<em>' + esc(IC.ledeAccent) + '</em>');
+    ledeEl.innerHTML = parts.join('<br>');
+  }
+  var subEl = document.getElementById('ic-sub');
+  if (subEl) subEl.textContent = IC.sub || '';
+
+  var tiersEl = document.getElementById('ic-tiers');
+  if (tiersEl) {
+    tiersEl.innerHTML = (IC.tiers || []).map(function (t) {
+      var subj = enc('Inner Circle · ' + (t.name || ''));
+      var body = enc('Хочу подписку Inner Circle ' + (t.name || '') + ' (' + (t.price || '') + (t.period || '') + ').\nИмя: \nTelegram: ');
+      var saveCls = 'ic-tier__save' + (t.saveNeutral ? ' ic-tier__save--neutral' : '');
+      return '<div class="ic-tier' + (t.featured ? ' ic-tier--featured' : '') + '">' +
+        '<div class="ic-tier__head">' +
+          '<div class="ic-tier__name">' + esc(t.name || '') + '</div>' +
+          (t.sub ? '<div class="ic-tier__sub">' + esc(t.sub) + '</div>' : '') +
+        '</div>' +
+        '<div class="ic-tier__price"><strong>' + esc(t.price || '') + '</strong><span>' + esc(t.period || '') + '</span></div>' +
+        (t.save ? '<div class="' + saveCls + '">' + esc(t.save) + '</div>' : '') +
+        '<div class="ic-tier__copy">' + esc(t.copy || '') + '</div>' +
+        '<div class="ic-tier__cta">' +
+          '<a class="btn ' + (t.featured ? 'btn--primary' : 'btn--secondary') + '" href="mailto:' + esc(email) + '?subject=' + subj + '&body=' + body + '" style="display:block;text-align:center">Подписаться →</a>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  var perksEl = document.getElementById('ic-perks');
+  if (perksEl) {
+    perksEl.innerHTML = (IC.perks || []).map(function (p) {
+      return '<li>' + esc(p) + '</li>';
+    }).join('');
+  }
+})();
+</script>
 </body>
 </html>

@@ -437,11 +437,20 @@ const DASH_HTML = `<!doctype html>
     newForm: null,        // null | 'driver' | 'track' | 'car' — which inline form is open
     editEntity: null,     // { kind, id }   — opens edit form for an existing entity
     cropper: null,        // { slotId, photoUrl, x, y, zoom, kind } — opens cropper modal
+    pageEdit: null,       // null | 'sponsors' | 'coaching' | 'merch' | 'prints' | 'innerCircle' | 'courses' | 'tickets'
+    pageDraft: null,      // mutable per-section draft while pageEdit is open
     drivers: [],
     tracks: [],
     cars: [],
     eventPoster: null,
     gallery: [],
+    sponsors: null,
+    coaching: null,
+    merch: null,
+    prints: null,
+    innerCircle: null,
+    courses: null,
+    tickets: null,
   };
 
   function escHtml(s) { return String(s ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -525,12 +534,25 @@ const DASH_HTML = `<!doctype html>
     state.eventPoster = data.eventPoster || {};
     state.calendarPhotos = data.calendarPhotos || {};
     state.gallery = data.gallery || [];
+    state.sponsors = data.sponsors || null;
+    state.coaching = data.coaching || null;
+    state.merch = data.merch || null;
+    state.prints = data.prints || null;
+    state.innerCircle = data.innerCircle || null;
+    state.courses = data.courses || null;
+    state.tickets = data.tickets || null;
     renderRail();
     await refreshPublishStatus();
   }
 
   function renderRail() {
     const rail = document.getElementById('rail');
+    if (state.pageEdit) {
+      rail.innerHTML = renderPageEditor();
+      // Re-insert publish bar (it lives at the rail top).
+      refreshPublishStatus();
+      return;
+    }
     const editor = state.editEntity ? renderEditEntityForm() : (state.activeSlot ? renderEditor() : '');
     const heroSlot = renderSlot('hero', 'Афиша главной', heroSubtitle(), state.eventPoster && state.eventPoster.photo, state.eventPoster && state.eventPoster.photo);
     const driverSlots = state.drivers.map((d) =>
@@ -592,10 +614,416 @@ const DASH_HTML = `<!doctype html>
         '<div class="group__title"><b>Галерея</b><span>' + state.gallery.length + ' файлов</span></div>' +
         '<div class="group__hint">' + escHtml(SPECS.gallery.note + ' · ' + SPECS.gallery.max) + '</div>' +
         gallerySection +
+      '</div>' +
+      '<div class="group">' +
+        '<div class="group__title"><b>Страницы (тексты, цены)</b><span>8 разделов</span></div>' +
+        '<div class="group__hint">Тексты и цены для Sponsors / Coaching / Merch / Tickets и т.д.</div>' +
+        renderPagesNav() +
       '</div>';
 
     if (state.cropper) showCropper();
   }
+
+  function renderPagesNav() {
+    const items = [
+      { key: 'sponsors',    label: 'Sponsors',     page: 'sponsors' },
+      { key: 'coaching',    label: 'Coaching',     page: 'coaching' },
+      { key: 'merch',       label: 'Merch · Drop 01 + 02', page: 'merch' },
+      { key: 'tickets',     label: 'Tickets',      page: 'tickets' },
+      { key: 'prints',      label: 'Prints',       page: 'prints' },
+      { key: 'innerCircle', label: 'Inner Circle', page: 'inner-circle' },
+      { key: 'courses',     label: 'Courses',      page: 'courses' },
+    ];
+    return '<div style="display:flex;flex-direction:column;gap:6px">' +
+      items.map((it) =>
+        '<button class="group__add" style="text-align:left;padding:9px 12px" onclick="openPageEditor(\\'' + it.key + '\\',\\'' + it.page + '\\')">→ ' + escHtml(it.label) + '</button>'
+      ).join('') +
+    '</div>';
+  }
+
+  function openPageEditor(key, page) {
+    state.pageEdit = key;
+    state.page = page;
+    state.activeSlot = null;
+    state.editEntity = null;
+    // Deep clone current state for the section so edits don't mutate state until saved.
+    state.pageDraft = JSON.parse(JSON.stringify(state[key] || sectionDefaults(key)));
+    refreshFrame();
+    renderRail();
+  }
+  window.openPageEditor = openPageEditor;
+  function closePageEditor() {
+    state.pageEdit = null;
+    state.pageDraft = null;
+    renderRail();
+  }
+  window.closePageEditor = closePageEditor;
+
+  function sectionDefaults(key) {
+    if (key === 'sponsors') return { lede:'', ledeAccent:'', copy:'', copy2:'', stats:[], tiers:[], partners:[], contactEmail:'' };
+    if (key === 'coaching') return { intro:'', formats:[], pilotRateFrom:'', pilotRatePeriod:'', contactTelegram:'', contactTelegramLabel:'', contactEmail:'' };
+    if (key === 'merch') return { dropOne:{ sub:'',name:'',copy:'',fabric:'',cut:'',print:'',sizes:'',drop:'',price:'',priceUnit:'',telegramUrl:'',telegramLabel:'',soonTiles:[] }, dropTwo:{ lede:'',ledeAccent:'',sub:'',cards:[],notifyEmail:'' } };
+    if (key === 'prints') return { lede:'', sizes:[], info:[], contactEmail:'' };
+    if (key === 'innerCircle') return { lede:'', lede2:'', ledeAccent:'', sub:'', tiers:[], perks:[], contactEmail:'' };
+    if (key === 'courses') return { lede:'', courses:[], teaserTitle:'', teaserAccent:'', teaserCopy:'', contactEmail:'' };
+    if (key === 'tickets') return { lede:'', rules:'', events:[], contactEmail:'' };
+    return {};
+  }
+
+  function pageEditorEndpoint(key) {
+    if (key === 'innerCircle') return '/admin/api/inner-circle';
+    return '/admin/api/' + key;
+  }
+
+  function renderPageEditor() {
+    const key = state.pageEdit;
+    const draft = state.pageDraft;
+    const titles = {
+      sponsors: 'Sponsors', coaching: 'Coaching', merch: 'Merch (Drop 01 + Drop 02)',
+      tickets: 'Tickets', prints: 'Prints', innerCircle: 'Inner Circle', courses: 'Courses',
+    };
+    const back = '<button class="group__add" style="margin-bottom:12px" onclick="closePageEditor()">← К списку</button>';
+    const head = '<h2 style="margin:0 0 14px;font-size:15px;letter-spacing:0.06em;text-transform:uppercase;color:var(--accent)">' + escHtml(titles[key] || key) + '</h2>';
+    const save = '<div style="display:flex;gap:8px;align-items:center;justify-content:flex-end;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">' +
+      '<span class="save-tag" id="page-save-tag" style="font-size:11px;color:var(--ok);display:none">сохранено ✓</span>' +
+      '<button class="pub__btn" onclick="savePageEditor()">Сохранить</button>' +
+    '</div>';
+    let body = '';
+    if (key === 'sponsors') body = renderSponsorsForm(draft);
+    else if (key === 'coaching') body = renderCoachingForm(draft);
+    else if (key === 'merch') body = renderMerchForm(draft);
+    else if (key === 'tickets') body = renderTicketsForm(draft);
+    else if (key === 'prints') body = renderPrintsForm(draft);
+    else if (key === 'innerCircle') body = renderInnerCircleForm(draft);
+    else if (key === 'courses') body = renderCoursesForm(draft);
+    return back + head + body + save;
+  }
+
+  // ---- form helpers ----
+  function fInput(label, path, value, opts) {
+    opts = opts || {};
+    const type = opts.type || 'text';
+    const ph = opts.placeholder || '';
+    return '<div class="row" style="margin-bottom:8px"><label style="display:block;font-size:10px;letter-spacing:0.06em;color:var(--muted);text-transform:uppercase;margin-bottom:3px">' + escHtml(label) + '</label>' +
+      '<input type="' + type + '" data-path="' + escHtml(path) + '" value="' + escHtml(String(value == null ? '' : value)) + '" placeholder="' + escHtml(ph) + '" style="width:100%;padding:7px 10px;background:var(--bg-2);border:1px solid var(--line);border-radius:6px;color:var(--fg);font:inherit;font-size:12px"></div>';
+  }
+  function fTextarea(label, path, value, opts) {
+    opts = opts || {};
+    const rows = opts.rows || 3;
+    return '<div class="row" style="margin-bottom:8px"><label style="display:block;font-size:10px;letter-spacing:0.06em;color:var(--muted);text-transform:uppercase;margin-bottom:3px">' + escHtml(label) + '</label>' +
+      '<textarea data-path="' + escHtml(path) + '" rows="' + rows + '" placeholder="' + escHtml(opts.placeholder || '') + '" style="width:100%;padding:7px 10px;background:var(--bg-2);border:1px solid var(--line);border-radius:6px;color:var(--fg);font:inherit;font-size:12px;resize:vertical">' + escHtml(String(value == null ? '' : value)) + '</textarea></div>';
+  }
+  function fCheck(label, path, value) {
+    return '<label style="display:inline-flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);margin-right:14px">' +
+      '<input type="checkbox" data-path="' + escHtml(path) + '" data-bool="1"' + (value ? ' checked' : '') + '>' + escHtml(label) +
+    '</label>';
+  }
+  function arrayCard(title, content, removeAction) {
+    return '<div style="border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:8px;background:#0f0f13">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em">' +
+        '<b style="color:var(--fg)">' + escHtml(title) + '</b>' +
+        '<button onclick="' + removeAction + '" style="padding:3px 8px;border-radius:4px;border:1px solid var(--line);background:#1a1a20;color:var(--accent);cursor:pointer;font-size:11px">✕</button>' +
+      '</div>' + content +
+    '</div>';
+  }
+  function addRowBtn(label, action) {
+    return '<button class="group__add" onclick="' + action + '" style="margin-bottom:8px">+ ' + escHtml(label) + '</button>';
+  }
+  function bulletEditor(path, items) {
+    items = items || [];
+    return '<div data-bullets-path="' + escHtml(path) + '">' +
+      items.map((b, i) =>
+        '<div style="display:flex;gap:6px;margin-bottom:4px"><input type="text" value="' + escHtml(String(b)) + '" data-path="' + escHtml(path + '.' + i) + '" style="flex:1;padding:6px 8px;background:var(--bg-2);border:1px solid var(--line);border-radius:4px;color:var(--fg);font:inherit;font-size:12px"><button onclick="removeBullet(\\'' + escHtml(path) + '\\',' + i + ')" style="padding:3px 8px;border-radius:4px;border:1px solid var(--line);background:#1a1a20;color:var(--accent);cursor:pointer;font-size:11px">✕</button></div>'
+      ).join('') +
+      '<button class="group__add" onclick="addBullet(\\'' + escHtml(path) + '\\')" style="font-size:11px">+ Добавить пункт</button>' +
+    '</div>';
+  }
+
+  // ---- per-section forms ----
+  function renderSponsorsForm(d) {
+    return '<h3 style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin:14px 0 8px">Заголовок</h3>' +
+      fInput('Лид', 'lede', d.lede) +
+      fInput('Акцент в лиде (часть лида, выделенная цветом)', 'ledeAccent', d.ledeAccent) +
+      fTextarea('Параграф 1', 'copy', d.copy) +
+      fTextarea('Параграф 2', 'copy2', d.copy2) +
+      '<h3 style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin:14px 0 8px">Статистика</h3>' +
+      (d.stats || []).map((s, i) =>
+        arrayCard('Stat #' + (i + 1),
+          fInput('Заголовок', 'stats.' + i + '.label', s.label) +
+          fInput('Значение', 'stats.' + i + '.value', s.value) +
+          fInput('Единица', 'stats.' + i + '.unit', s.unit),
+          'removeArrayItem(\\'stats\\',' + i + ')')
+      ).join('') +
+      addRowBtn('Добавить статистику', 'addArrayItem(\\'stats\\',{label:"",value:"",unit:""})') +
+      '<h3 style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin:14px 0 8px">Тарифы</h3>' +
+      (d.tiers || []).map((t, i) =>
+        arrayCard('Tier #' + (i + 1) + ' · ' + (t.name || ''),
+          fInput('ID', 'tiers.' + i + '.id', t.id) +
+          fInput('Название', 'tiers.' + i + '.name', t.name) +
+          fInput('Подзаголовок', 'tiers.' + i + '.sub', t.sub) +
+          fInput('Цена', 'tiers.' + i + '.price', t.price) +
+          fInput('Период (например /мес)', 'tiers.' + i + '.period', t.period) +
+          fCheck('Featured (выделен)', 'tiers.' + i + '.featured', t.featured) +
+          '<div style="margin:8px 0 4px;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em">Что входит:</div>' +
+          bulletEditor('tiers.' + i + '.perks', t.perks),
+          'removeArrayItem(\\'tiers\\',' + i + ')')
+      ).join('') +
+      addRowBtn('Добавить тариф', 'addArrayItem(\\'tiers\\',{id:"",name:"",sub:"",price:"",period:"",featured:false,perks:[]})') +
+      '<h3 style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin:14px 0 8px">Текущие партнёры</h3>' +
+      (d.partners || []).map((p, i) =>
+        arrayCard('Partner #' + (i + 1),
+          fInput('Название', 'partners.' + i + '.name', p.name) +
+          fInput('URL (опц.)', 'partners.' + i + '.url', p.url),
+          'removeArrayItem(\\'partners\\',' + i + ')')
+      ).join('') +
+      addRowBtn('Добавить партнёра', 'addArrayItem(\\'partners\\',{name:"",url:""})') +
+      '<h3 style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin:14px 0 8px">Контакт</h3>' +
+      fInput('Email для брифа', 'contactEmail', d.contactEmail);
+  }
+
+  function renderCoachingForm(d) {
+    return fTextarea('Вступление', 'intro', d.intro, { rows: 4 }) +
+      '<h3 style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin:14px 0 8px">Форматы занятий</h3>' +
+      (d.formats || []).map((f, i) =>
+        arrayCard('Формат #' + (i + 1) + ' · ' + (f.name || ''),
+          fInput('ID', 'formats.' + i + '.id', f.id) +
+          fInput('Название', 'formats.' + i + '.name', f.name) +
+          fInput('Длительность', 'formats.' + i + '.duration', f.duration) +
+          fInput('Цена', 'formats.' + i + '.price', f.price) +
+          fInput('Период (/сессия, /день…)', 'formats.' + i + '.period', f.period) +
+          fCheck('Featured', 'formats.' + i + '.featured', f.featured) +
+          fTextarea('Описание', 'formats.' + i + '.copy', f.copy),
+          'removeArrayItem(\\'formats\\',' + i + ')')
+      ).join('') +
+      addRowBtn('Добавить формат', 'addArrayItem(\\'formats\\',{id:"",name:"",duration:"",price:"",period:"",featured:false,copy:""})') +
+      '<h3 style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin:14px 0 8px">Карточка пилота</h3>' +
+      fInput('Цена «от» (показывается в карточках пилотов)', 'pilotRateFrom', d.pilotRateFrom) +
+      fInput('Период (например /сессия)', 'pilotRatePeriod', d.pilotRatePeriod) +
+      '<h3 style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin:14px 0 8px">Контакт</h3>' +
+      fInput('Telegram URL', 'contactTelegram', d.contactTelegram) +
+      fInput('Telegram label', 'contactTelegramLabel', d.contactTelegramLabel) +
+      fInput('Email', 'contactEmail', d.contactEmail);
+  }
+
+  function renderMerchForm(d) {
+    const d1 = d.dropOne || {};
+    const d2 = d.dropTwo || {};
+    return '<h3 style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin:14px 0 8px">Drop 01 — Hannya Tee</h3>' +
+      fInput('Подзаголовок', 'dropOne.sub', d1.sub) +
+      fInput('Название продукта', 'dropOne.name', d1.name) +
+      fTextarea('Описание', 'dropOne.copy', d1.copy, { rows: 4 }) +
+      fInput('Fabric (ткань)', 'dropOne.fabric', d1.fabric) +
+      fInput('Cut (крой)', 'dropOne.cut', d1.cut) +
+      fInput('Print (печать)', 'dropOne.print', d1.print) +
+      fInput('Sizes (размеры)', 'dropOne.sizes', d1.sizes) +
+      fInput('Drop (тираж)', 'dropOne.drop', d1.drop) +
+      fInput('Цена', 'dropOne.price', d1.price) +
+      fInput('Единица цены (/each и т.п.)', 'dropOne.priceUnit', d1.priceUnit) +
+      fInput('Telegram URL', 'dropOne.telegramUrl', d1.telegramUrl) +
+      fInput('Telegram label', 'dropOne.telegramLabel', d1.telegramLabel) +
+      '<div style="margin:8px 0 4px;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em">«Скоро» плитки:</div>' +
+      (d1.soonTiles || []).map((t, i) =>
+        arrayCard('Soon #' + (i + 1),
+          fInput('Название', 'dropOne.soonTiles.' + i + '.title', t.title) +
+          fInput('Подсказка', 'dropOne.soonTiles.' + i + '.hint', t.hint),
+          'removeArrayItem(\\'dropOne.soonTiles\\',' + i + ')')
+      ).join('') +
+      addRowBtn('Добавить плитку', 'addArrayItem(\\'dropOne.soonTiles\\',{title:"",hint:""})') +
+      '<h3 style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin:14px 0 8px">Drop 02 — Caps / Patches / Stickers</h3>' +
+      fInput('Лид', 'dropTwo.lede', d2.lede) +
+      fInput('Акцент в лиде', 'dropTwo.ledeAccent', d2.ledeAccent) +
+      fTextarea('Подпись', 'dropTwo.sub', d2.sub) +
+      '<div style="margin:8px 0 4px;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em">Карточки preorder:</div>' +
+      (d2.cards || []).map((c, i) =>
+        arrayCard('Карточка #' + (i + 1) + ' · ' + (c.name || ''),
+          fInput('ID', 'dropTwo.cards.' + i + '.id', c.id) +
+          fInput('Подзаголовок', 'dropTwo.cards.' + i + '.sub', c.sub) +
+          fInput('Название', 'dropTwo.cards.' + i + '.name', c.name) +
+          fInput('Превью label', 'dropTwo.cards.' + i + '.previewLabel', c.previewLabel) +
+          fTextarea('Описание', 'dropTwo.cards.' + i + '.copy', c.copy) +
+          fInput('Цена', 'dropTwo.cards.' + i + '.price', c.price),
+          'removeArrayItem(\\'dropTwo.cards\\',' + i + ')')
+      ).join('') +
+      addRowBtn('Добавить карточку', 'addArrayItem(\\'dropTwo.cards\\',{id:"",sub:"",name:"",previewLabel:"",copy:"",price:""})') +
+      fInput('Email для notify-on-drop', 'dropTwo.notifyEmail', d2.notifyEmail);
+  }
+
+  function renderTicketsForm(d) {
+    return fTextarea('Лид', 'lede', d.lede) +
+      fTextarea('Правила (внизу страницы)', 'rules', d.rules, { rows: 4 }) +
+      '<h3 style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin:14px 0 8px">Ивенты</h3>' +
+      (d.events || []).map((e, i) =>
+        arrayCard('Событие #' + (i + 1) + ' · ' + (e.name || ''),
+          fInput('ID', 'events.' + i + '.id', e.id) +
+          fInput('День (DD)', 'events.' + i + '.day', e.day) +
+          fInput('Месяц (MM)', 'events.' + i + '.month', e.month) +
+          fInput('Подпись даты (Июнь и т.п.)', 'events.' + i + '.dayLabel', e.dayLabel) +
+          fInput('Название', 'events.' + i + '.name', e.name) +
+          fInput('Трасса', 'events.' + i + '.track', e.track) +
+          fInput('Город', 'events.' + i + '.city', e.city) +
+          fTextarea('Описание', 'events.' + i + '.desc', e.desc) +
+          fInput('Цена (число, ₽)', 'events.' + i + '.price', e.price, { type: 'number' }) +
+          fInput('Всего билетов', 'events.' + i + '.total', e.total, { type: 'number' }) +
+          fInput('Продано', 'events.' + i + '.sold', e.sold, { type: 'number' }) +
+          fCheck('HOT (значок)', 'events.' + i + '.hot', e.hot),
+          'removeArrayItem(\\'events\\',' + i + ')')
+      ).join('') +
+      addRowBtn('Добавить событие', 'addArrayItem(\\'events\\',{id:"",day:"",month:"",dayLabel:"",name:"",track:"",city:"",desc:"",price:0,total:0,sold:0,hot:false})') +
+      fInput('Email получателя заявок', 'contactEmail', d.contactEmail);
+  }
+
+  function renderPrintsForm(d) {
+    return fTextarea('Лид', 'lede', d.lede) +
+      '<h3 style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin:14px 0 8px">Размеры и цены</h3>' +
+      (d.sizes || []).map((s, i) =>
+        arrayCard('Размер #' + (i + 1),
+          fInput('Метка', 'sizes.' + i + '.label', s.label) +
+          fInput('Цена (число, ₽)', 'sizes.' + i + '.price', s.price, { type: 'number' }),
+          'removeArrayItem(\\'sizes\\',' + i + ')')
+      ).join('') +
+      addRowBtn('Добавить размер', 'addArrayItem(\\'sizes\\',{label:"",price:0})') +
+      '<h3 style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin:14px 0 8px">Info-блок</h3>' +
+      (d.info || []).map((it, i) =>
+        arrayCard('Пункт #' + (i + 1),
+          fInput('Заголовок', 'info.' + i + '.title', it.title) +
+          fTextarea('Текст', 'info.' + i + '.body', it.body),
+          'removeArrayItem(\\'info\\',' + i + ')')
+      ).join('') +
+      addRowBtn('Добавить пункт', 'addArrayItem(\\'info\\',{title:"",body:""})') +
+      fInput('Email получателя заказов', 'contactEmail', d.contactEmail);
+  }
+
+  function renderInnerCircleForm(d) {
+    return fInput('Лид строка 1', 'lede', d.lede) +
+      fInput('Лид строка 2', 'lede2', d.lede2) +
+      fInput('Лид акцент (выделена цветом)', 'ledeAccent', d.ledeAccent) +
+      fTextarea('Подпись', 'sub', d.sub) +
+      '<h3 style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin:14px 0 8px">Тарифы</h3>' +
+      (d.tiers || []).map((t, i) =>
+        arrayCard('Tier #' + (i + 1) + ' · ' + (t.name || ''),
+          fInput('ID', 'tiers.' + i + '.id', t.id) +
+          fInput('Название', 'tiers.' + i + '.name', t.name) +
+          fInput('Подзаголовок', 'tiers.' + i + '.sub', t.sub) +
+          fInput('Цена', 'tiers.' + i + '.price', t.price) +
+          fInput('Период (/мес и т.п.)', 'tiers.' + i + '.period', t.period) +
+          fCheck('Featured', 'tiers.' + i + '.featured', t.featured) +
+          fInput('Бейдж экономии', 'tiers.' + i + '.save', t.save) +
+          fCheck('Бейдж нейтральный (не оранжевый)', 'tiers.' + i + '.saveNeutral', t.saveNeutral) +
+          fTextarea('Описание', 'tiers.' + i + '.copy', t.copy),
+          'removeArrayItem(\\'tiers\\',' + i + ')')
+      ).join('') +
+      addRowBtn('Добавить тариф', 'addArrayItem(\\'tiers\\',{id:"",name:"",sub:"",price:"",period:"",featured:false,save:"",saveNeutral:false,copy:""})') +
+      '<h3 style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin:14px 0 8px">Что внутри (бенефиты)</h3>' +
+      bulletEditor('perks', d.perks) +
+      '<h3 style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin:14px 0 8px">Контакт</h3>' +
+      fInput('Email получателя', 'contactEmail', d.contactEmail);
+  }
+
+  function renderCoursesForm(d) {
+    return fTextarea('Лид', 'lede', d.lede) +
+      '<h3 style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin:14px 0 8px">Курсы</h3>' +
+      (d.courses || []).map((c, i) =>
+        arrayCard('Курс #' + (i + 1) + ' · ' + (c.name || ''),
+          fInput('ID', 'courses.' + i + '.id', c.id) +
+          fInput('Название', 'courses.' + i + '.name', c.name) +
+          fInput('Кол-во уроков (например 5 уроков)', 'courses.' + i + '.lessons', c.lessons) +
+          fInput('Уровень', 'courses.' + i + '.level', c.level) +
+          fCheck('Featured', 'courses.' + i + '.featured', c.featured) +
+          '<div style="margin:8px 0 4px;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em">Bullets:</div>' +
+          bulletEditor('courses.' + i + '.bullets', c.bullets) +
+          fInput('Доступ', 'courses.' + i + '.access', c.access) +
+          fInput('Цена', 'courses.' + i + '.price', c.price) +
+          fInput('Единица цены (/курс)', 'courses.' + i + '.priceUnit', c.priceUnit),
+          'removeArrayItem(\\'courses\\',' + i + ')')
+      ).join('') +
+      addRowBtn('Добавить курс', 'addArrayItem(\\'courses\\',{id:"",name:"",lessons:"",level:"",featured:false,bullets:[],access:"безлимит",price:"",priceUnit:"/ курс"})') +
+      '<h3 style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin:14px 0 8px">Тизер пробного урока</h3>' +
+      fInput('Заголовок', 'teaserTitle', d.teaserTitle) +
+      fInput('Акцент в заголовке', 'teaserAccent', d.teaserAccent) +
+      fTextarea('Описание', 'teaserCopy', d.teaserCopy) +
+      fInput('Email получателя', 'contactEmail', d.contactEmail);
+  }
+
+  // ---- form mutation helpers (operate on state.pageDraft via dotted paths) ----
+  function getByPath(obj, path) {
+    const parts = path.split('.');
+    let cur = obj;
+    for (const p of parts) {
+      if (cur == null) return undefined;
+      cur = cur[p];
+    }
+    return cur;
+  }
+  function setByPath(obj, path, value) {
+    const parts = path.split('.');
+    let cur = obj;
+    for (let i = 0; i < parts.length - 1; i++) {
+      const p = parts[i];
+      if (cur[p] == null) cur[p] = (/^\\d+$/.test(parts[i + 1]) ? [] : {});
+      cur = cur[p];
+    }
+    cur[parts[parts.length - 1]] = value;
+  }
+  function commitFormToDraft() {
+    document.querySelectorAll('[data-path]').forEach((el) => {
+      const path = el.getAttribute('data-path');
+      let v;
+      if (el.getAttribute('data-bool') === '1') v = el.checked;
+      else if (el.type === 'number') v = Number(el.value || 0);
+      else v = el.value;
+      setByPath(state.pageDraft, path, v);
+    });
+  }
+  function addArrayItem(path, item) {
+    commitFormToDraft();
+    const arr = getByPath(state.pageDraft, path) || [];
+    arr.push(item);
+    setByPath(state.pageDraft, path, arr);
+    renderRail();
+  }
+  function removeArrayItem(path, idx) {
+    commitFormToDraft();
+    const arr = getByPath(state.pageDraft, path) || [];
+    arr.splice(idx, 1);
+    setByPath(state.pageDraft, path, arr);
+    renderRail();
+  }
+  function addBullet(path) {
+    commitFormToDraft();
+    const arr = getByPath(state.pageDraft, path) || [];
+    arr.push('');
+    setByPath(state.pageDraft, path, arr);
+    renderRail();
+  }
+  function removeBullet(path, idx) {
+    commitFormToDraft();
+    const arr = getByPath(state.pageDraft, path) || [];
+    arr.splice(idx, 1);
+    setByPath(state.pageDraft, path, arr);
+    renderRail();
+  }
+  window.addArrayItem = addArrayItem;
+  window.removeArrayItem = removeArrayItem;
+  window.addBullet = addBullet;
+  window.removeBullet = removeBullet;
+
+  async function savePageEditor() {
+    commitFormToDraft();
+    const key = state.pageEdit;
+    const url = pageEditorEndpoint(key);
+    const r = await fetch(url, {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(state.pageDraft),
+    });
+    if (!r.ok) { toast('Ошибка: ' + r.status); return; }
+    toast('Сохранено');
+    const tag = document.getElementById('page-save-tag');
+    if (tag) { tag.style.display = 'inline'; setTimeout(() => { tag.style.display = 'none'; }, 1800); }
+    await loadAll();
+    refreshFrame();
+  }
+  window.savePageEditor = savePageEditor;
 
   function toggleNewForm(kind) {
     state.newForm = state.newForm === kind ? null : kind;
@@ -1387,7 +1815,16 @@ app.get("/admin/api/all", { preHandler: requireAuth }, async () => {
     tracks: data.tracks || [],
     cars: data.cars || [],
     eventPoster: data.eventPoster || {},
+    calendarPhotos: data.calendarPhotos || {},
     gallery,
+    // Page-section editors:
+    sponsors: data.sponsors || null,
+    coaching: data.coaching || null,
+    merch: data.merch || null,
+    prints: data.prints || null,
+    innerCircle: data.innerCircle || null,
+    courses: data.courses || null,
+    tickets: data.tickets || null,
   };
 });
 
@@ -1864,6 +2301,220 @@ app.post("/admin/api/maintenance", { preHandler: requireAuth }, async (req, repl
   settings.maintenance = Boolean(on);
   await writeJson(join(DATA_DIR, "settings.json"), settings);
   return { ok: true, maintenance: settings.maintenance };
+});
+
+// ---------- Page-section editors (sponsors / coaching / merch / tickets / prints / inner-circle / courses) ----------
+
+// Generic helpers used by all page editors. They sanitize incoming bodies
+// against a shape spec so admins can't inject arbitrary HTML or oversized
+// payloads. The shape spec mirrors the seed JSON in drift-data.draft.json.
+function s(val, max) {
+  if (val == null) return "";
+  return String(val).slice(0, max || 400);
+}
+function arrOf(val) { return Array.isArray(val) ? val : []; }
+function bool(v) { return Boolean(v); }
+function num(v) { var n = Number(v); return Number.isFinite(n) ? n : 0; }
+
+async function readPagesData() { return readJson(DRIFT_DATA, {}); }
+async function writePagesData(d) { await writeJson(DRIFT_DATA, d); }
+
+// --- sponsors ---
+app.post("/admin/api/sponsors", { preHandler: requireAuth }, async (req, reply) => {
+  const b = req.body ?? {};
+  const data = await readPagesData();
+  data.sponsors = {
+    lede: s(b.lede, 240),
+    ledeAccent: s(b.ledeAccent, 80),
+    copy: s(b.copy, 1200),
+    copy2: s(b.copy2, 1200),
+    stats: arrOf(b.stats).slice(0, 8).map((x) => ({
+      label: s(x.label, 40), value: s(x.value, 40), unit: s(x.unit, 40),
+    })),
+    tiers: arrOf(b.tiers).slice(0, 6).map((t) => ({
+      id: s(t.id, 40),
+      name: s(t.name, 40),
+      sub: s(t.sub, 80),
+      price: s(t.price, 40),
+      period: s(t.period, 40),
+      featured: bool(t.featured),
+      perks: arrOf(t.perks).slice(0, 20).map((p) => s(p, 240)),
+    })),
+    partners: arrOf(b.partners).slice(0, 24).map((p) => ({
+      name: s(p.name, 60),
+      logo: p.logo ? s(p.logo, 240) : null,
+      url: p.url ? s(p.url, 240) : null,
+    })),
+    contactEmail: s(b.contactEmail, 120),
+  };
+  await writePagesData(data);
+  return data.sponsors;
+});
+
+// --- coaching ---
+app.post("/admin/api/coaching", { preHandler: requireAuth }, async (req, reply) => {
+  const b = req.body ?? {};
+  const data = await readPagesData();
+  data.coaching = {
+    intro: s(b.intro, 1200),
+    formats: arrOf(b.formats).slice(0, 6).map((f) => ({
+      id: s(f.id, 40),
+      name: s(f.name, 60),
+      duration: s(f.duration, 40),
+      price: s(f.price, 40),
+      period: s(f.period, 40),
+      featured: bool(f.featured),
+      copy: s(f.copy, 600),
+    })),
+    pilotRateFrom: s(b.pilotRateFrom, 40),
+    pilotRatePeriod: s(b.pilotRatePeriod, 40),
+    contactTelegram: s(b.contactTelegram, 240),
+    contactTelegramLabel: s(b.contactTelegramLabel, 60),
+    contactEmail: s(b.contactEmail, 120),
+  };
+  await writePagesData(data);
+  return data.coaching;
+});
+
+// --- merch (covers Drop 01 + Drop 02) ---
+app.post("/admin/api/merch", { preHandler: requireAuth }, async (req, reply) => {
+  const b = req.body ?? {};
+  const data = await readPagesData();
+  const d1 = b.dropOne || {};
+  const d2 = b.dropTwo || {};
+  data.merch = {
+    dropOne: {
+      sub: s(d1.sub, 80),
+      name: s(d1.name, 80),
+      copy: s(d1.copy, 1200),
+      fabric: s(d1.fabric, 80),
+      cut: s(d1.cut, 80),
+      print: s(d1.print, 80),
+      sizes: s(d1.sizes, 80),
+      drop: s(d1.drop, 80),
+      price: s(d1.price, 40),
+      priceUnit: s(d1.priceUnit, 40),
+      telegramUrl: s(d1.telegramUrl, 240),
+      telegramLabel: s(d1.telegramLabel, 60),
+      soonTiles: arrOf(d1.soonTiles).slice(0, 6).map((t) => ({
+        title: s(t.title, 40), hint: s(t.hint, 40),
+      })),
+    },
+    dropTwo: {
+      lede: s(d2.lede, 240),
+      ledeAccent: s(d2.ledeAccent, 120),
+      sub: s(d2.sub, 1200),
+      cards: arrOf(d2.cards).slice(0, 6).map((c) => ({
+        id: s(c.id, 40),
+        sub: s(c.sub, 80),
+        name: s(c.name, 80),
+        previewLabel: s(c.previewLabel, 40),
+        copy: s(c.copy, 600),
+        price: s(c.price, 40),
+      })),
+      notifyEmail: s(d2.notifyEmail, 120),
+    },
+  };
+  await writePagesData(data);
+  return data.merch;
+});
+
+// --- prints ---
+app.post("/admin/api/prints", { preHandler: requireAuth }, async (req, reply) => {
+  const b = req.body ?? {};
+  const data = await readPagesData();
+  data.prints = {
+    lede: s(b.lede, 1200),
+    sizes: arrOf(b.sizes).slice(0, 8).map((sz) => ({
+      label: s(sz.label, 40), price: num(sz.price),
+    })),
+    info: arrOf(b.info).slice(0, 6).map((i) => ({
+      title: s(i.title, 60), body: s(i.body, 400),
+    })),
+    contactEmail: s(b.contactEmail, 120),
+  };
+  await writePagesData(data);
+  return data.prints;
+});
+
+// --- inner circle ---
+app.post("/admin/api/inner-circle", { preHandler: requireAuth }, async (req, reply) => {
+  const b = req.body ?? {};
+  const data = await readPagesData();
+  data.innerCircle = {
+    lede: s(b.lede, 240),
+    lede2: s(b.lede2, 240),
+    ledeAccent: s(b.ledeAccent, 240),
+    sub: s(b.sub, 1200),
+    tiers: arrOf(b.tiers).slice(0, 6).map((t) => ({
+      id: s(t.id, 40),
+      name: s(t.name, 40),
+      sub: s(t.sub, 80),
+      price: s(t.price, 40),
+      period: s(t.period, 40),
+      featured: bool(t.featured),
+      save: s(t.save, 80),
+      saveNeutral: bool(t.saveNeutral),
+      copy: s(t.copy, 600),
+    })),
+    perks: arrOf(b.perks).slice(0, 20).map((p) => s(p, 240)),
+    contactEmail: s(b.contactEmail, 120),
+  };
+  await writePagesData(data);
+  return data.innerCircle;
+});
+
+// --- courses ---
+app.post("/admin/api/courses", { preHandler: requireAuth }, async (req, reply) => {
+  const b = req.body ?? {};
+  const data = await readPagesData();
+  data.courses = {
+    lede: s(b.lede, 1200),
+    courses: arrOf(b.courses).slice(0, 8).map((c) => ({
+      id: s(c.id, 40),
+      name: s(c.name, 80),
+      lessons: s(c.lessons, 40),
+      level: s(c.level, 40),
+      featured: bool(c.featured),
+      bullets: arrOf(c.bullets).slice(0, 12).map((p) => s(p, 240)),
+      access: s(c.access, 60),
+      price: s(c.price, 40),
+      priceUnit: s(c.priceUnit, 40),
+    })),
+    teaserTitle: s(b.teaserTitle, 120),
+    teaserAccent: s(b.teaserAccent, 60),
+    teaserCopy: s(b.teaserCopy, 600),
+    contactEmail: s(b.contactEmail, 120),
+  };
+  await writePagesData(data);
+  return data.courses;
+});
+
+// --- tickets ---
+app.post("/admin/api/tickets", { preHandler: requireAuth }, async (req, reply) => {
+  const b = req.body ?? {};
+  const data = await readPagesData();
+  data.tickets = {
+    lede: s(b.lede, 1200),
+    rules: s(b.rules, 1200),
+    events: arrOf(b.events).slice(0, 30).map((e) => ({
+      id: s(e.id, 60),
+      day: s(e.day, 4),
+      month: s(e.month, 4),
+      dayLabel: s(e.dayLabel, 30),
+      name: s(e.name, 120),
+      track: s(e.track, 120),
+      city: s(e.city, 80),
+      desc: s(e.desc, 600),
+      price: num(e.price),
+      total: num(e.total),
+      sold: num(e.sold),
+      hot: bool(e.hot),
+    })),
+    contactEmail: s(b.contactEmail, 120),
+  };
+  await writePagesData(data);
+  return data.tickets;
 });
 
 app.get("/admin/health", async () => ({ ok: true }));

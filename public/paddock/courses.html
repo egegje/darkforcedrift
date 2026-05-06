@@ -157,88 +157,16 @@
     <span class="meta">VIDEO COURSES<br>BY DARK FORCE</span>
   </div>
 
-  <p class="cs-lede">
-    Курсы дрифта от Dark Force. От первого заноса до соревновательного уровня. Видео-уроки + разборы + практические задания. Доступ — без срока.
-  </p>
+  <p class="cs-lede" id="cs-lede"></p>
 
-  <div class="cs-grid">
-
-    <article class="cs-card">
-      <div class="cs-card__head">
-        <div class="cs-card__name">Первые шаги в дрифт</div>
-        <div class="cs-card__row">
-          <span class="cs-card__lessons">5 уроков</span>
-          <span class="cs-card__level">Новичок</span>
-        </div>
-      </div>
-      <ul class="cs-card__list">
-        <li>Как сесть в машину и подготовиться к заезду</li>
-        <li>Базовые упражнения: хэндбрейк, занос на сцеплении</li>
-        <li>Как читать трассу и выбирать траекторию</li>
-        <li>Что такое угол, скорость, инициирование</li>
-        <li>Безопасность и подготовка машины для первой тренировки</li>
-      </ul>
-      <div class="cs-card__access">Доступ: <strong>безлимит</strong></div>
-      <div class="cs-card__foot">
-        <div class="cs-card__price">6 900 ₽<small>/ курс</small></div>
-        <a class="btn btn--secondary" href="mailto:darkforcedrift@gmail.com?subject=Курс%20%C2%B7%20Первые%20шаги%20в%20дрифт&body=Хочу%20купить%20курс%20%22Первые%20шаги%20в%20дрифт%22%20(6%20900%20%E2%82%BD).%20Имя%3A%20%0AEmail%3A%20%0ATelegram%3A%20">Купить →</a>
-      </div>
-    </article>
-
-    <article class="cs-card cs-card--featured">
-      <div class="cs-card__head">
-        <div class="cs-card__name">Управление углом</div>
-        <div class="cs-card__row">
-          <span class="cs-card__lessons">8 уроков</span>
-          <span class="cs-card__level">Средний</span>
-        </div>
-      </div>
-      <ul class="cs-card__list">
-        <li>Как удерживать угол стабильно через всю обвязку</li>
-        <li>Переход от заноса к контр-заносу (transition)</li>
-        <li>Работа газом и сцеплением в заносе</li>
-        <li>Тандем: дистанция, чтение партнёра, реакция</li>
-        <li>Разбор онбордов команды с ошибками и фиксами</li>
-      </ul>
-      <div class="cs-card__access">Доступ: <strong>безлимит</strong></div>
-      <div class="cs-card__foot">
-        <div class="cs-card__price">12 900 ₽<small>/ курс</small></div>
-        <a class="btn btn--primary" href="mailto:darkforcedrift@gmail.com?subject=Курс%20%C2%B7%20Управление%20углом&body=Хочу%20купить%20курс%20%22Управление%20углом%22%20(12%20900%20%E2%82%BD).%20Имя%3A%20%0AEmail%3A%20%0ATelegram%3A%20">Купить →</a>
-      </div>
-    </article>
-
-    <article class="cs-card">
-      <div class="cs-card__head">
-        <div class="cs-card__name">Соревновательный дрифт</div>
-        <div class="cs-card__row">
-          <span class="cs-card__lessons">10 уроков</span>
-          <span class="cs-card__level">Продвинутый</span>
-        </div>
-      </div>
-      <ul class="cs-card__list">
-        <li>Структура соревновательного заезда: solo, tandem, battle</li>
-        <li>Подготовка машины: сетап, давление, диф, развал</li>
-        <li>Психология в день старта: разминка, фокус, сон</li>
-        <li>Как читать судей и подавать стиль</li>
-        <li>Полный разбор одного боевого заезда команды</li>
-      </ul>
-      <div class="cs-card__access">Доступ: <strong>безлимит</strong></div>
-      <div class="cs-card__foot">
-        <div class="cs-card__price">24 900 ₽<small>/ курс</small></div>
-        <a class="btn btn--secondary" href="mailto:darkforcedrift@gmail.com?subject=Курс%20%C2%B7%20Соревновательный%20дрифт&body=Хочу%20купить%20курс%20%22Соревновательный%20дрифт%22%20(24%20900%20%E2%82%BD).%20Имя%3A%20%0AEmail%3A%20%0ATelegram%3A%20">Купить →</a>
-      </div>
-    </article>
-
-  </div>
+  <div class="cs-grid" id="cs-grid"></div>
 
   <div id="cs-teaser" class="cs-teaser">
     <div>
-      <h2 class="cs-teaser__title">Бесплатный <em>пробный урок</em></h2>
-      <p class="cs-teaser__copy">
-        Один полноценный урок из любого курса — бесплатно. Чтобы понять, подходит ли формат, и услышать, как разбирают онборды пилоты Dark Force. Оставь email — пришлём ссылку.
-      </p>
+      <h2 class="cs-teaser__title" id="cs-teaser-title"></h2>
+      <p class="cs-teaser__copy" id="cs-teaser-copy"></p>
     </div>
-    <form class="cs-teaser__form" method="POST" action="mailto:darkforcedrift@gmail.com?subject=Пробный%20урок%20Dark%20Force" enctype="text/plain">
+    <form class="cs-teaser__form" id="cs-teaser-form" method="POST" action="mailto:darkforcedrift@gmail.com?subject=Пробный%20урок%20Dark%20Force" enctype="text/plain">
       <input type="email" name="email" required placeholder="Твой email">
       <button type="submit" class="btn btn--primary">Получить →</button>
     </form>
@@ -264,5 +192,61 @@ window.DRIFT_TWEAKS = /*EDITMODE-BEGIN*/{
 </script>
 <script src="../drift-data.js"></script>
 <script src="../shared.js"></script>
+<script>
+(function () {
+  function esc(s) { return String(s == null ? '' : s).replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c])); }
+  function enc(s) { return encodeURIComponent(String(s == null ? '' : s)); }
+  var data = window.DRIFT_DATA || {};
+  var CS = data.courses || {};
+  var email = CS.contactEmail || 'darkforcedrift@gmail.com';
+
+  var ledeEl = document.getElementById('cs-lede');
+  if (ledeEl) ledeEl.textContent = CS.lede || 'Курсы дрифта от Dark Force.';
+
+  var grid = document.getElementById('cs-grid');
+  if (grid) {
+    grid.innerHTML = (CS.courses || []).map(function (c) {
+      var subj = enc('Курс · ' + (c.name || ''));
+      var body = enc('Хочу купить курс "' + (c.name || '') + '" (' + (c.price || '') + ').\nИмя: \nEmail: \nTelegram: ');
+      return '<article class="cs-card' + (c.featured ? ' cs-card--featured' : '') + '">' +
+        '<div class="cs-card__head">' +
+          '<div class="cs-card__name">' + esc(c.name || '') + '</div>' +
+          '<div class="cs-card__row">' +
+            (c.lessons ? '<span class="cs-card__lessons">' + esc(c.lessons) + '</span>' : '') +
+            (c.level ? '<span class="cs-card__level">' + esc(c.level) + '</span>' : '') +
+          '</div>' +
+        '</div>' +
+        '<ul class="cs-card__list">' +
+          (c.bullets || []).map(function (b) { return '<li>' + esc(b) + '</li>'; }).join('') +
+        '</ul>' +
+        (c.access ? '<div class="cs-card__access">Доступ: <strong>' + esc(c.access) + '</strong></div>' : '') +
+        '<div class="cs-card__foot">' +
+          '<div class="cs-card__price">' + esc(c.price || '') + (c.priceUnit ? '<small>' + esc(c.priceUnit) + '</small>' : '') + '</div>' +
+          '<a class="btn ' + (c.featured ? 'btn--primary' : 'btn--secondary') + '" href="mailto:' + esc(email) + '?subject=' + subj + '&body=' + body + '">Купить →</a>' +
+        '</div>' +
+      '</article>';
+    }).join('');
+  }
+
+  var teaserTitleEl = document.getElementById('cs-teaser-title');
+  if (teaserTitleEl) {
+    var t = CS.teaserTitle || 'Бесплатный пробный урок';
+    var accent = CS.teaserAccent || '';
+    if (accent && t.indexOf(accent) !== -1) {
+      teaserTitleEl.innerHTML = esc(t.replace(accent, '')).replace(/\s+$/, '') + ' <em>' + esc(accent) + '</em>';
+    } else {
+      teaserTitleEl.textContent = t;
+    }
+  }
+  var teaserCopyEl = document.getElementById('cs-teaser-copy');
+  if (teaserCopyEl) teaserCopyEl.textContent = CS.teaserCopy || '';
+
+  var formEl = document.getElementById('cs-teaser-form');
+  if (formEl) {
+    var url = formEl.getAttribute('action') || '';
+    formEl.setAttribute('action', url.replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/, email));
+  }
+})();
+</script>
 </body>
 </html>
