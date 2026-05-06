@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="ru" data-variant="paddock">
+<head>
+<meta charset="utf-8">
+<title>Coaching — Paddock — drift.eg.je</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared.css?v=brand3">
+<link rel="stylesheet" href="paddock.css">
+<link rel="stylesheet" href="../mobile-overrides.css?v=mobile5">
+<style>
+  /* Tier strip */
+  .co-tier-row { display:grid; grid-template-columns: 1fr; gap:14px; margin-top:24px; }
+  @media (min-width: 700px) { .co-tier-row { grid-template-columns: repeat(3, 1fr); } }
+  .co-tier {
+    background:#0f0f10; border:1px solid #2a2a2c; padding:18px 20px;
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .co-tier__name {
+    font-family:var(--font-display, 'Oswald', sans-serif);
+    font-size:20px; letter-spacing:0.04em; text-transform:uppercase; color:#fff;
+  }
+  .co-tier__price {
+    font-family:'Bebas Neue', sans-serif; font-size:36px; line-height:1; color: var(--accent);
+    letter-spacing:0.02em;
+  }
+  .co-tier__price small {
+    font-family:'JetBrains Mono', monospace; font-size:11px; color: rgba(255,255,255,0.55);
+    letter-spacing:0.18em; margin-left:6px; vertical-align:5px;
+  }
+  .co-tier__copy { color: rgba(255,255,255,0.78); font-size:13px; line-height:1.55; }
+
+  /* Pilot grid */
+  .co-pilots { display:grid; grid-template-columns: 1fr; gap:18px; margin-top:24px; }
+  @media (min-width: 720px) { .co-pilots { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1100px) { .co-pilots { grid-template-columns: repeat(3, 1fr); } }
+  .co-pilot {
+    background:#0f0f10; border:1px solid #2a2a2c; overflow:hidden;
+    display:flex; flex-direction:column;
+  }
+  .co-pilot__photo {
+    aspect-ratio: 4/3; background:#0a0a0b; position:relative; overflow:hidden;
+  }
+  .co-pilot__photo img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .co-pilot__photo-tape {
+    position:absolute; top:12px; left:12px;
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.18em;
+    background: var(--accent); color: var(--accent-ink);
+    padding:4px 8px; text-transform:uppercase;
+  }
+  .co-pilot__body { padding:16px 18px 18px; display:flex; flex-direction:column; gap:10px; flex:1; }
+  .co-pilot__name {
+    font-family:var(--font-display, 'Oswald', sans-serif);
+    font-size:22px; letter-spacing:0.02em; text-transform:uppercase; color:#fff;
+  }
+  .co-pilot__sub {
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.18em;
+    color: rgba(255,255,255,0.55); text-transform:uppercase;
+  }
+  .co-pilot__meta {
+    display:grid; grid-template-columns: 1fr 1fr; gap:8px 14px;
+    border-top:1px dashed #2a2a2c; padding-top:10px; margin-top:auto;
+  }
+  .co-pilot__meta dt {
+    font-family:'JetBrains Mono', monospace; font-size:9px; letter-spacing:0.22em;
+    color: rgba(255,255,255,0.45); text-transform:uppercase;
+  }
+  .co-pilot__meta dd { margin:2px 0 0; color:#fff; font-weight:600; font-size:13px; line-height:1.3; }
+  .co-pilot__rate {
+    display:flex; align-items:baseline; gap:6px; padding-top:6px;
+  }
+  .co-pilot__rate strong {
+    font-family:'Bebas Neue', sans-serif; font-size:28px; line-height:1; color:#fff;
+    letter-spacing:0.02em;
+  }
+  .co-pilot__rate span {
+    font-family:'JetBrains Mono', monospace; font-size:10px; color: rgba(255,255,255,0.55);
+    letter-spacing:0.18em;
+  }
+  .co-pilot__cta { padding-top:6px; }
+
+  /* Booking form */
+  .co-form-wrap {
+    margin-top:42px; background:#0f0f10; border:1px solid #2a2a2c; padding:24px;
+  }
+  .co-form-wrap h2 {
+    font-family:var(--font-display, 'Oswald', sans-serif);
+    font-size:24px; letter-spacing:0.02em; text-transform:uppercase; color:#fff; margin:0 0 8px;
+  }
+  .co-form-wrap p {
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.18em;
+    color: rgba(255,255,255,0.55); text-transform:uppercase; margin:0 0 18px;
+  }
+  .co-form { display:grid; grid-template-columns:1fr; gap:14px; }
+  @media (min-width: 700px) { .co-form { grid-template-columns: 1fr 1fr; } .co-form .full { grid-column: 1 / -1; } }
+  .co-form label {
+    display:flex; flex-direction:column; gap:6px;
+    font-family:'JetBrains Mono', monospace; font-size:10px;
+    letter-spacing:0.18em; color: rgba(255,255,255,0.55); text-transform:uppercase;
+  }
+  .co-form input,
+  .co-form select,
+  .co-form textarea {
+    background:#1a1a1c; border:1px solid #2a2a2c; padding:12px 14px;
+    color:#fff; font-family:'Manrope', system-ui, sans-serif; font-size:14px;
+    border-radius:0; transition:border-color .15s;
+  }
+  .co-form input:focus,
+  .co-form select:focus,
+  .co-form textarea:focus { outline:none; border-color: var(--accent); }
+  .co-form textarea { min-height:110px; resize:vertical; }
+  .co-form__submit {
+    grid-column: 1 / -1; display:flex; justify-content:flex-end; gap:14px; align-items:center; flex-wrap:wrap;
+  }
+  .co-form__hint {
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.18em;
+    color: rgba(255,255,255,0.4); text-transform:uppercase;
+  }
+</style>
+</head>
+<body class="pad-body">
+
+<div class="pad-strip"></div>
+
+<header class="topbar">
+  <div class="topbar__inner">
+    <a class="brand brand--stack" href="../index.html" aria-label="Dark Force">
+      <svg class="monster-head" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6">
+        <path d="M4 4 L14 10 L24 4 L22 16 L26 22 L14 26 L2 22 L6 16 Z" fill="var(--accent)" stroke="none"/>
+      </svg>
+      <span class="brand__wordmark">DARK <b>FORCE</b></span>
+    </a>
+    <nav class="nav">
+      <a href="home.html">Home</a>
+      <a href="team.html">Team</a>
+      <a href="drivers.html">Drivers</a>
+      <a href="calendar.html">Calendar</a>
+      <a href="tracks.html">Tracks</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="shop.html">Shop</a>
+      <a href="merch.html">Merch</a>
+      <a href="sponsors.html">Sponsors</a>
+      <a class="active" href="coaching.html">Coaching</a>
+    </nav>
+    <div class="topbar__right">
+      <a class="btn btn--primary" href="#co-book">Записаться</a>
+    </div>
+  </div>
+</header>
+
+<section class="pad-section">
+  <div class="pad-section__head">
+    <span class="num">10</span>
+    <h2>Coaching</h2>
+    <span class="meta">SESSIONS WITH<br>DARK FORCE PILOTS</span>
+  </div>
+
+  <p style="color:rgba(255,255,255,0.78); font-size:15px; line-height:1.6; max-width:60ch; margin-top:18px">
+    Урок дрифта 1-на-1 с пилотом команды Dark Force. Реальная трасса, твоя машина или машина пилота, ленты онбордовых видео, разбор ошибок прямо после заезда. Подходит и тем, кто только встал на боком, и тем, кто хочет шагнуть из любителя в полупрофи.
+  </p>
+
+  <div class="co-tier-row">
+    <div class="co-tier">
+      <div class="co-tier__name">Intro · 60 мин</div>
+      <div class="co-tier__price">8 000 ₽<small>/ сессия</small></div>
+      <div class="co-tier__copy">
+        Знакомство с дрифтом, базовые упражнения (заход в управляемый занос, удержание угла), теория. Идеально для новичка.
+      </div>
+    </div>
+    <div class="co-tier" style="border-color: var(--accent)">
+      <div class="co-tier__name">Standard · 90 мин</div>
+      <div class="co-tier__price">12 000 ₽<small>/ сессия</small></div>
+      <div class="co-tier__copy">
+        90 минут практики, прохождение конкретной трассы или обвязки, разбор онбордки после каждого захода. Большинство клиентов берут именно этот формат.
+      </div>
+    </div>
+    <div class="co-tier">
+      <div class="co-tier__name">Pro · день</div>
+      <div class="co-tier__price">35 000 ₽<small>/ день</small></div>
+      <div class="co-tier__copy">
+        Полный день с пилотом — сборка машины утром, тренировка с разбором каждого заезда, видеоанализ вечером. Для тех, кто готовится к соревнованию.
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:42px;font-family:var(--font-display, 'Oswald', sans-serif);font-size:22px;letter-spacing:0.04em;text-transform:uppercase;color:#fff">Пилоты-инструкторы</h3>
+
+  <div class="co-pilots" id="co-pilots-grid">
+    <!-- Populated client-side from drift-data.js -->
+  </div>
+
+  <div id="co-book" class="co-form-wrap">
+    <h2>Заявка на занятие</h2>
+    <p>Ответим в течение 24 часов с конкретной датой и местом</p>
+    <form class="co-form" method="POST" action="mailto:darkforcedrift@gmail.com?subject=Заявка%20на%20коучинг" enctype="text/plain">
+      <label>
+        Имя
+        <input type="text" name="name" required placeholder="Как тебя зовут">
+      </label>
+      <label>
+        Telegram или телефон
+        <input type="text" name="contact" required placeholder="@username или +7…">
+      </label>
+      <label>
+        Уровень
+        <select name="level">
+          <option value="beginner">Никогда не дрифтил</option>
+          <option value="basic" selected>Был в заносе пару раз</option>
+          <option value="intermediate">Стабильно держу угол</option>
+          <option value="advanced">Готовлюсь к соревнованиям</option>
+        </select>
+      </label>
+      <label>
+        Формат
+        <select name="format">
+          <option value="intro">Intro · 60 мин · 8 000 ₽</option>
+          <option value="standard" selected>Standard · 90 мин · 12 000 ₽</option>
+          <option value="pro">Pro · день · 35 000 ₽</option>
+          <option value="custom">Кастомный формат</option>
+        </select>
+      </label>
+      <label>
+        Какой пилот предпочтителен (опц.)
+        <input type="text" name="pilot" placeholder="Имя из списка выше или 'любой'">
+      </label>
+      <label>
+        Город / трасса
+        <input type="text" name="city" placeholder="СПб, Москва, Krylatskoye, Igora…">
+      </label>
+      <label class="full">
+        Машина (твоя или пилота?)
+        <input type="text" name="car" placeholder="например: Nissan S14, под занос. Или: возьму машину пилота">
+      </label>
+      <label class="full">
+        Что хочешь от занятия / комментарий
+        <textarea name="message" placeholder="Цели, задачи, удобные даты"></textarea>
+      </label>
+      <div class="co-form__submit">
+        <span class="co-form__hint">или сразу в Telegram</span>
+        <a href="https://t.me/darkforcedrift" target="_blank" rel="noopener" class="co-form__hint" style="color: var(--accent); text-decoration:none">@darkforcedrift</a>
+        <button type="submit" class="btn btn--primary">Отправить заявку →</button>
+      </div>
+    </form>
+  </div>
+
+</section>
+
+<footer class="pad-footer">
+  <div class="pad-footer__mono">
+    <span>© 2026 DRIFT.EG.JE</span>
+    <span>Paddock variant · coaching</span>
+  </div>
+</footer>
+
+<script>
+window.DRIFT_TWEAKS = /*EDITMODE-BEGIN*/{
+  "accent": "orange",
+  "density": "comfy",
+  "motion": true,
+  "hero": "video",
+  "lang": "ru"
+}/*EDITMODE-END*/;
+</script>
+<script src="../drift-data.js"></script>
+<script src="../shared.js"></script>
+<script>
+(function () {
+  function esc(s) { return String(s == null ? '' : s).replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])); }
+  var data = window.DRIFT_DATA || {};
+  var drivers = (data.drivers || []).filter(function (d) {
+    // Only locals (Russia / RU drivers) take coaching bookings; FD pilots
+    // and visiting champions are showcase-only.
+    return d.country === 'Russia' || d.category === 'local' || d.category === 'team';
+  }).slice(0, 6);
+
+  // If we couldn't detect locals, fall back to first 4 drivers.
+  if (drivers.length === 0) drivers = (data.drivers || []).slice(0, 4);
+
+  var host = document.getElementById('co-pilots-grid');
+  if (!host) return;
+  if (drivers.length === 0) {
+    host.innerHTML = '<div style="grid-column:1/-1;color:rgba(255,255,255,0.55);font-family:JetBrains Mono, monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;text-align:center;padding:36px;border:1px dashed rgba(255,255,255,0.18)">Список инструкторов появится после публикации</div>';
+    return;
+  }
+  host.innerHTML = drivers.map(function (d) {
+    var photo = d.photo ? '<img src="' + esc(d.photo) + '" alt="' + esc(d.name) + '">' : '';
+    var car = d.car || '—';
+    var hp = d.hp ? d.hp + ' л.с.' : '—';
+    return '' +
+      '<div class="co-pilot">' +
+        '<div class="co-pilot__photo">' +
+          (photo ? '<span class="co-pilot__photo-tape">PILOT</span>' + photo : '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.3);font-family:JetBrains Mono, monospace;font-size:10px;letter-spacing:0.18em">NO PHOTO</div>') +
+        '</div>' +
+        '<div class="co-pilot__body">' +
+          '<div class="co-pilot__sub">DARK FORCE PILOT</div>' +
+          '<div class="co-pilot__name">' + esc(d.name) + '</div>' +
+          '<dl class="co-pilot__meta">' +
+            '<div><dt>Авто</dt><dd>' + esc(car) + '</dd></div>' +
+            '<div><dt>Мощность</dt><dd>' + esc(hp) + '</dd></div>' +
+          '</dl>' +
+          '<div class="co-pilot__rate">' +
+            '<strong>от 12 000 ₽</strong><span>/ сессия</span>' +
+          '</div>' +
+          '<div class="co-pilot__cta">' +
+            '<a class="btn btn--primary" href="#co-book" onclick="document.querySelector(&quot;[name=pilot]&quot;).value=&quot;' + esc(d.name) + '&quot;" style="display:block;text-align:center">Записаться к нему →</a>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+  }).join('');
+})();
+</script>
+</body>
+</html>
