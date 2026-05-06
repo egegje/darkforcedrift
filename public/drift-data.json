@@ -2,7 +2,7 @@
   "drivers": [
     {
       "rank": 1,
-      "name": "Andrey Denisov",
+      "name": "Андрей Юрьевич",
       "flag": null,
       "country": "Russia",
       "car": "Nissan 370z",
@@ -20,14 +20,14 @@
         "usa"
       ],
       "category": "world",
-      "photo": "/photos/drivers/driver-1--2026-05-05T23-15-51-r2.png",
-      "instagram": null
+      "photo": "/photos/drivers/driver-1--2026-05-06T05-14-14-r2.png",
+      "instagram": "dark_force_drift"
     },
     {
       "rank": 2,
-      "name": "Vlad Katin",
+      "name": "Vlad Дрочила",
       "flag": "🇺🇸",
-      "country": "США",
+      "country": "USA",
       "car": "Corvette c6",
       "engine": "LS2",
       "hp": 500,
@@ -44,7 +44,7 @@
         "1000hp"
       ],
       "category": "world",
-      "photo": "/photos/drivers/driver-2--2026-05-05T23-16-01-r3.png",
+      "photo": "/photos/drivers/driver-2--2026-05-06T05-11-54-ChatGPT-Image-6--2026-.-01_11_41.png",
       "instagram": null
     },
     {
@@ -54,7 +54,7 @@
       "country": "Russia",
       "car": "",
       "engine": "",
-      "hp": 0,
+      "hp": 500,
       "boost": "Garrett G35",
       "diff": "OS Giken",
       "tires": "Falken",
@@ -65,8 +65,8 @@
         "japan"
       ],
       "category": "world",
-      "photo": "/photos/drivers/driver-3--2026-05-05T23-16-13-r1.png",
-      "instagram": null
+      "photo": "/photos/drivers/driver-3--2026-05-06T05-14-28-r1.png",
+      "instagram": "a._dikunov"
     },
     {
       "rank": 4,
@@ -123,7 +123,12 @@
       "description": "Площадка и овал, где ежегодно проходит этап Formula Drift Pro. Один из самых известных дрифт-треков Флориды, принимающий топовые международные соревнования.",
       "website": null,
       "mapsUrl": "https://maps.app.goo.gl/zLiJN6AUk3PhnJXn6",
-      "photo": "/photos/tracks/track-orlando-speed-world--2026-04-26T23-05-00-OSW.jpeg"
+      "photo": "/photos/tracks/track-orlando-speed-world--2026-05-06T04-29-36-OSW.png",
+      "photoFocal": {
+        "x": 50,
+        "y": 38,
+        "zoom": 1
+      }
     },
     {
       "name": "Sebring International Raceway",
@@ -140,7 +145,8 @@
       "type": "road-course",
       "description": "Легендарный кольцевой трек, принимающий 12 часов Себринга. Здесь проводят этапы Formula Drift Pro Am — младшей лиги USDC (United States Drift Championship).",
       "website": "https://sebringraceway.com",
-      "mapsUrl": "https://maps.app.goo.gl/4dTBGBEAHgy4exHj9"
+      "mapsUrl": "https://maps.app.goo.gl/4dTBGBEAHgy4exHj9",
+      "photo": "/photos/tracks/track-sebring-international-raceway--2026-05-06T04-30-50-Sebring.png"
     },
     {
       "name": "Lead Foot City",
@@ -156,7 +162,8 @@
       "type": "karting",
       "description": "Новая быстро развивающаяся площадка. Принимает этапы Formula Drift Pro Am. Активная тренировочная база — проводят drift-школы, open track days и тематические ивенты.",
       "website": "https://leadfootcity.com",
-      "mapsUrl": "https://maps.app.goo.gl/kCmf6qPxdWagUCkt6"
+      "mapsUrl": "https://maps.app.goo.gl/kCmf6qPxdWagUCkt6",
+      "photo": "/photos/tracks/track-lead-foot-city--2026-05-06T04-38-41-Lead-Foot-City.png"
     },
     {
       "name": "Showtime Speedway",
@@ -170,7 +177,8 @@
       "type": "oval",
       "description": "Овальный трек, специализирующийся на дрифт-ивентах и open drift nights. Доступен для райдеров всех уровней — от новичков до амбициозных любителей.",
       "website": "https://showtimedrift.com",
-      "mapsUrl": "https://maps.app.goo.gl/j4BBUECqk6gx6kwN9"
+      "mapsUrl": "https://maps.app.goo.gl/j4BBUECqk6gx6kwN9",
+      "photo": "/photos/tracks/track-showtime-speedway--2026-05-06T04-28-15-ChatGPT-Image-6--2026-.-00_22_54.pn"
     },
     {
       "name": "Homestead-Miami Speedway",
@@ -184,7 +192,8 @@
       "type": "oval",
       "description": "Действующий NASCAR-трек. Внутри трассы регулярно проводятся дрифт-ивенты, open drift days и тематические соревнования. Инфраструктура мирового уровня.",
       "website": "https://homesteadmiamispeedway.com",
-      "mapsUrl": "https://maps.app.goo.gl/WDX7RJ68ifjhRkd28"
+      "mapsUrl": "https://maps.app.goo.gl/WDX7RJ68ifjhRkd28",
+      "photo": "/photos/tracks/track-homestead-miami-speedway--2026-05-06T04-40-07-Homestead.png"
     }
   ],
   "services": [
@@ -226,17 +235,22 @@
     }
   ],
   "eventPoster": {
-    "photo": null,
-    "title": null,
-    "date": null,
-    "track": null,
-    "ctaUrl": null
+    "photo": "/photos/hero/hero--2026-05-06T04-25-10-4.png",
+    "title": "Formula Drift Pro Am Round 1",
+    "date": "Jun 6, 2026",
+    "track": "Sebring International Raceway",
+    "ctaUrl": null,
+    "photoFocal": {
+      "x": 16,
+      "y": 39,
+      "zoom": 1
+    }
   },
   "cars": [
     {
       "name": "Nissan 370z «Pro»",
       "color": "Yellow",
-      "driver": "",
+      "driver": "Andrey Denisov",
       "engine": "2JZ-GE VVTI Turbo",
       "hp": 850,
       "torque": "900 N·m",
@@ -263,7 +277,19 @@
           "date": "2026-04-15",
           "title": "2JZ свап (готов)",
           "body": "Сняли VQ37VHR, поставили **2JZ-GE VVTI** с турбиной Garrett G30-900.\n\nПрошивка ECU занимает примерно 3 дня.",
-          "photoUrl": null
+          "photoUrl": null,
+          "parts": [
+            {
+              "id": "bac15979b17d",
+              "name": "BC Racing BR coilovers",
+              "brand": "BC Racing",
+              "price": "~12 500 ₽",
+              "note": "на S14 6/4kg springs, без переделок",
+              "photo": null,
+              "shopUrl": "https://example.com/bc-br",
+              "shopName": "DriftShop"
+            }
+          ]
         }
       ],
       "gallery": []
@@ -291,14 +317,14 @@
         "zoom": 1
       },
       "slug": "nissan-370z-drift-missile",
-      "description": "Атмосферный «снаряд» с закисью. Лёгкий, маневренный — для local-сессий и тренировок.",
+      "description": "Атмосферный «снаряд» с закисью. Лёгкий, маневренный — для local-сессий и тренировок.\nВыворот GK-tech, койловеры BC Racing.",
       "buildHistory": [],
       "gallery": []
     },
     {
       "name": "BMW e61 Drift Taxi",
       "color": "",
-      "driver": "",
+      "driver": "Denisov / Dikunov",
       "engine": "LQ9 (V8 LS) + Compressor",
       "hp": 660,
       "torque": "700 N·m",
@@ -318,16 +344,16 @@
         "zoom": 1
       },
       "slug": "bmw-e61-drift-taxi",
-      "description": "Drift-taxi для гостевых заездов. MilSpec-проводка под нагрузки.",
+      "description": "Шоу-кар. \nDrift-taxi для гостевых заездов. MilSpec-проводка под нагрузки.\nУникальное авто. BMW e61 с четыремя ковшами, баком в багажнике и мощным американским V8, раздутым компрессором и настроенным на спирту (е85).",
       "buildHistory": [],
       "gallery": []
     },
     {
       "name": "Chevrolet Corvette C6",
       "color": "",
-      "driver": "",
-      "engine": "",
-      "hp": 0,
+      "driver": "Vlad Katin",
+      "engine": "LS2",
+      "hp": 400,
       "torque": "",
       "turbo": "",
       "ecu": "",
@@ -335,7 +361,7 @@
       "angleKit": "",
       "coilovers": "",
       "fuel": "",
-      "livery": "",
+      "livery": "N/A",
       "notes": "Технические детали уточняются.",
       "id": 4,
       "photo": "/photos/cars/car-4--2026-04-29T15-24-56-IMG_8854.jpeg",
@@ -352,7 +378,7 @@
     {
       "name": "BMW e36",
       "color": "",
-      "driver": "",
+      "driver": "Andrey Denisov",
       "engine": "1JZ",
       "hp": 550,
       "torque": "600 N·m",
@@ -362,7 +388,7 @@
       "angleKit": "Maxicustom",
       "coilovers": "BC Racing",
       "fuel": "",
-      "livery": "",
+      "livery": "AutoWorldArt",
       "notes": "Классика swap-сцены: 1JZ под капотом, лёгкий кузов e36.",
       "id": 5,
       "photo": "/photos/cars/car-5--2026-05-05T23-26-47-55267840-0B6B-4EAA-B75D-54F02ADE83E1.JPG",
@@ -374,7 +400,7 @@
     {
       "name": "BMW e92",
       "color": "",
-      "driver": "",
+      "driver": "Andrey Denisov",
       "engine": "2JZ",
       "hp": 900,
       "torque": "800 N·m",
@@ -385,11 +411,11 @@
       "coilovers": "Feal",
       "fuel": "Radium",
       "livery": "",
-      "notes": "Полный билд под Pro-Am: 2JZ свап, FIA-каркас, фабричная электроника Ecumaster.",
+      "notes": "Полный билд под Pro: 2JZ свап, FIA-каркас, фабричная электроника Ecumaster.",
       "id": 6,
       "photo": "/photos/cars/car-6--2026-05-05T23-46-54-bbbff96f-dd1e-47f9-a216-ea8d9c784937.JPG",
       "slug": "bmw-e92",
-      "description": "Полный билд под Pro-Am: 2JZ свап, FIA-каркас, фабричная электроника Ecumaster.",
+      "description": "Pro билд: 2JZ на 900 л.с. на сухом картере, секвентальная коробка SAMSONAS, трехдисковое сцепление OS GIKEN, FIA-каркас, подвеска WiseFab, койловеры Feal, электроника от Ecumaster.",
       "buildHistory": [],
       "gallery": []
     }
@@ -419,7 +445,7 @@
   "sponsors": {
     "lede": "Прокачайте бренд вместе с командой, которая горит.",
     "ledeAccent": "горит",
-    "copy": "Dark Force — гоночная команда с собственной аудиторией дрифт-фанатов в Санкт-Петербурге и регионах. Размещение бренда у нас не куплено пакетом «баннер на сайте» — это совместная история: ливрея на машине, кадры с ивентов, упоминание в видео-разборах, выезд пилотов в шоурум партнёра. Каждое появление — нативный контент в среде, где люди реально покупают.",
+    "copy": "Dark Force — гоночная команда с собственной аудиторией дрифт-фанатов в Майами и Южной Флориде. Размещение бренда у нас не куплено пакетом «баннер на сайте» — это совместная история: ливрея на машине, кадры с ивентов, упоминание в видео-разборах, выезд пилотов в шоурум партнёра. Каждое появление — нативный контент в среде, где люди реально покупают.",
     "copy2": "Подходит шинникам, тюнинг-ателье, химии, маслам, эвакуаторам, шоурумам, аккредитованным сервисам, шлемам и экипировке.",
     "stats": [
       {
@@ -645,11 +671,11 @@
     "info": [
       {
         "title": "Печать",
-        "body": "Через любой партнёрский фотосалон Санкт-Петербурга. Бумага плотная матовая или сатин."
+        "body": "Через партнёрскую типографию в Майами. Бумага плотная матовая или сатин."
       },
       {
         "title": "Доставка",
-        "body": "По России 3–7 дней. Курьер по СПб — в день готовности."
+        "body": "По США 2–5 дней через USPS. Pickup в Майами в день готовности."
       },
       {
         "title": "Срок изготовления",
@@ -791,25 +817,25 @@
         "day": "28",
         "month": "06",
         "dayLabel": "Июнь",
-        "name": "Открытая тренировка · Krylatskoye",
-        "track": "Крылатское",
-        "city": "Москва",
+        "name": "Open Practice · Homestead-Miami Speedway",
+        "track": "Homestead-Miami Speedway",
+        "city": "Майами",
         "desc": "Тренировочный день для тех, кто только встал на боком. Пилоты команды на трассе, можно подсмотреть.",
-        "price": 800,
+        "price": 35,
         "total": 120,
         "sold": 71,
         "hot": false
       },
       {
-        "id": "spb-07-12",
+        "id": "miami-07-12",
         "day": "12",
         "month": "07",
         "dayLabel": "Июль",
-        "name": "Шоу-заезд · Дни Города СПб",
-        "track": "Дворцовая площадь",
-        "city": "Санкт-Петербург",
-        "desc": "Парадный шоу-заезд команды Dark Force в рамках Дней Города. Ограниченное количество гостевых билетов.",
-        "price": 2500,
+        "name": "Showrun · Wynwood Block Party",
+        "track": "Wynwood Arts District",
+        "city": "Майами",
+        "desc": "Парадный шоу-заезд команды Dark Force в Wynwood. Ограниченное количество гостевых билетов.",
+        "price": 80,
         "total": 500,
         "sold": 312,
         "hot": true

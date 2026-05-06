@@ -192,6 +192,203 @@
     border: 1px solid var(--line);
   }
 
+  /* Parts list under each build entry */
+  .car-parts {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--line);
+  }
+  .car-parts__head {
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    margin-bottom: 10px;
+  }
+  .car-parts__head b { color: var(--accent); font-weight: 700; }
+  .car-part {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 14px;
+    padding: 12px;
+    border: 1px solid var(--line);
+    margin-bottom: 8px;
+    background: rgba(255,255,255,0.02);
+  }
+  .car-part__photo {
+    width: 80px; height: 80px;
+    object-fit: cover;
+    display: block;
+    border: 1px solid var(--line);
+  }
+  .car-part__placeholder {
+    width: 80px; height: 80px;
+    background: repeating-linear-gradient(
+      45deg,
+      rgba(255,255,255,0.04),
+      rgba(255,255,255,0.04) 4px,
+      transparent 4px,
+      transparent 8px
+    );
+    border: 1px solid var(--line);
+  }
+  .car-part__info { min-width: 0; }
+  .car-part__name {
+    font-family: var(--font-head, 'Bebas Neue', sans-serif);
+    font-size: 18px;
+    line-height: 1.05;
+    text-transform: uppercase;
+    color: var(--fg);
+    margin: 0 0 2px;
+  }
+  .car-part__meta {
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--fg-dim);
+    margin-bottom: 4px;
+  }
+  .car-part__meta b {
+    color: var(--accent);
+    font-family: var(--font-head, 'Bebas Neue', sans-serif);
+    font-size: 16px;
+    letter-spacing: 0.04em;
+    margin-right: 6px;
+  }
+  .car-part__note {
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 11px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+  .car-part__cta {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .car-part__cta a, .car-part__cta button {
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 8px 12px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: var(--accent-ink);
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .car-part__cta a.ghost, .car-part__cta button.ghost {
+    background: transparent;
+    color: var(--accent);
+  }
+  .car-part__cta a:hover, .car-part__cta button:hover {
+    background: var(--fg);
+    color: var(--bg);
+    border-color: var(--fg);
+  }
+  @media (max-width: 720px) {
+    .car-part { grid-template-columns: 64px 1fr; gap: 10px; padding: 10px; }
+    .car-part__photo, .car-part__placeholder { width: 64px; height: 64px; }
+  }
+
+  /* Order modal */
+  .order-back {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 200;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .order-modal {
+    background: var(--bg-2, #131318);
+    border: 1px solid var(--line);
+    padding: 24px;
+    width: 100%; max-width: 480px;
+    max-height: 92vh; overflow: auto;
+  }
+  .order-modal h3 {
+    font-family: var(--font-head, 'Bebas Neue', sans-serif);
+    font-size: 24px;
+    text-transform: uppercase;
+    margin: 0 0 4px;
+    color: var(--fg);
+  }
+  .order-modal .sub {
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    margin-bottom: 18px;
+  }
+  .order-modal .sub b { color: var(--accent); }
+  .order-modal label {
+    display: block;
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    margin: 12px 0 4px;
+  }
+  .order-modal input, .order-modal textarea {
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--bg, #0a0a0c);
+    border: 1px solid var(--line);
+    color: var(--fg);
+    font: inherit;
+    font-size: 14px;
+  }
+  .order-modal input:focus, .order-modal textarea:focus {
+    outline: none; border-color: var(--accent);
+  }
+  .order-modal textarea { resize: vertical; min-height: 70px; }
+  .order-modal__actions {
+    display: flex; gap: 10px; margin-top: 18px;
+    justify-content: flex-end;
+  }
+  .order-modal__actions button {
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 10px 16px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--fg-dim);
+    cursor: pointer;
+  }
+  .order-modal__actions button.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+    font-weight: 700;
+  }
+  .order-modal__actions button:disabled { opacity: 0.5; cursor: default; }
+  .order-modal .err {
+    margin-top: 10px;
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 11px;
+    color: var(--accent);
+    min-height: 16px;
+  }
+  .order-success {
+    text-align: center;
+    padding: 30px 10px;
+  }
+  .order-success h3 { color: var(--accent); }
+  .order-success p {
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 12px;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.6;
+    margin: 12px 0;
+  }
+
   /* Gallery grid */
   .car-gallery {
     margin-top: 12px;
@@ -404,6 +601,30 @@
     ? '<div class="car-specs">' + specs + '</div>'
     : '';
 
+  function renderPart(carSlug, entryId, p) {
+    var photo = p.photo
+      ? '<img class="car-part__photo" src="' + esc(p.photo) + '" loading="lazy" alt="">'
+      : '<div class="car-part__placeholder" aria-hidden="true"></div>';
+    var brandPrice = [];
+    if (p.price) brandPrice.push('<b>' + esc(p.price) + '</b>');
+    if (p.brand) brandPrice.push(esc(p.brand));
+    var meta = brandPrice.length ? '<div class="car-part__meta">' + brandPrice.join(' · ') + '</div>' : '';
+    var note = p.note ? '<div class="car-part__note">' + esc(p.note) + '</div>' : '';
+    var shopBtn = p.shopUrl
+      ? '<a class="ghost" href="' + esc(p.shopUrl) + '" target="_blank" rel="noopener nofollow">' + esc(p.shopName ? 'в магазине ' + p.shopName : 'в магазине') + ' ↗</a>'
+      : '';
+    var orderBtn = '<button type="button" data-order="' + esc(carSlug) + '|' + esc(entryId) + '|' + esc(p.id) + '">Хочу такую же →</button>';
+    return '<div class="car-part">' +
+      photo +
+      '<div class="car-part__info">' +
+        '<h4 class="car-part__name">' + esc(p.name || '—') + '</h4>' +
+        meta +
+        note +
+        '<div class="car-part__cta">' + orderBtn + shopBtn + '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
   var builds = Array.isArray(car.buildHistory) ? car.buildHistory : [];
   var buildsHtml = '';
   if (builds.length) {
@@ -411,12 +632,21 @@
       var photo = e.photoUrl
         ? '<img class="car-build__photo" src="' + esc(e.photoUrl) + '" loading="lazy" alt="">'
         : '';
+      var parts = Array.isArray(e.parts) ? e.parts : [];
+      var partsHtml = '';
+      if (parts.length) {
+        partsHtml = '<div class="car-parts">' +
+          '<div class="car-parts__head">Запчасти · <b>' + parts.length + '</b></div>' +
+          parts.map(function (p) { return renderPart(car.slug, e.id, p); }).join('') +
+        '</div>';
+      }
       return '<article class="car-build">' +
         '<div class="car-build__date">' + esc(fmtDate(e.date)) + '</div>' +
         '<div>' +
           (e.title ? '<h3 class="car-build__title">' + esc(e.title) + '</h3>' : '') +
           (e.body ? '<div class="car-build__body">' + md(e.body) + '</div>' : '') +
           photo +
+          partsHtml +
         '</div>' +
       '</article>';
     }).join('');
@@ -455,6 +685,88 @@
     descHtml +
     buildsHtml +
     galleryHtml;
+
+  // --- Order modal wiring ---
+  function openOrderModal(carSlug, entryId, partId) {
+    var carObj = (data.cars || []).find(function (c) { return c.slug === carSlug; });
+    var entryObj = carObj && (carObj.buildHistory || []).find(function (x) { return x.id === entryId; });
+    var partObj = entryObj && (entryObj.parts || []).find(function (x) { return x.id === partId; });
+    if (!partObj) return;
+
+    var back = document.createElement('div');
+    back.className = 'order-back';
+    back.innerHTML =
+      '<div class="order-modal" role="dialog" aria-label="Заказ запчасти">' +
+        '<h3>Хочу такую же</h3>' +
+        '<div class="sub"><b>' + esc(partObj.name) + '</b>' +
+          (partObj.brand ? ' · ' + esc(partObj.brand) : '') +
+          (partObj.price ? ' · ' + esc(partObj.price) : '') +
+        '</div>' +
+        '<div id="order-form">' +
+          '<label>Имя</label>' +
+          '<input id="o-name" autocomplete="name" required maxlength="120">' +
+          '<label>Контакт (Telegram / телефон / email)</label>' +
+          '<input id="o-contact" placeholder="@nick / +7… / mail@…" required maxlength="240">' +
+          '<label>Адрес доставки (опц.)</label>' +
+          '<input id="o-address" maxlength="400">' +
+          '<label>Комментарий (опц.)</label>' +
+          '<textarea id="o-comment" maxlength="1000" placeholder="Сроки, размеры, нюансы — что важно знать команде"></textarea>' +
+          '<div class="err" id="o-err"></div>' +
+          '<div class="order-modal__actions">' +
+            '<button type="button" id="o-cancel">Отмена</button>' +
+            '<button type="button" class="primary" id="o-submit">Отправить заявку</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(back);
+
+    function close() { back.remove(); }
+    back.addEventListener('click', function (ev) { if (ev.target === back) close(); });
+    back.querySelector('#o-cancel').addEventListener('click', close);
+
+    back.querySelector('#o-submit').addEventListener('click', async function () {
+      var name = back.querySelector('#o-name').value.trim();
+      var contact = back.querySelector('#o-contact').value.trim();
+      var address = back.querySelector('#o-address').value.trim();
+      var comment = back.querySelector('#o-comment').value.trim();
+      var err = back.querySelector('#o-err');
+      err.textContent = '';
+      if (!name || !contact) { err.textContent = 'Имя и контакт обязательны'; return; }
+      var btn = back.querySelector('#o-submit'); btn.disabled = true;
+      try {
+        var r = await fetch('/api/car-part-order', {
+          method: 'POST', credentials: 'same-origin',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ carSlug: carSlug, entryId: entryId, partId: partId, name: name, contact: contact, address: address, comment: comment }),
+        });
+        if (!r.ok) {
+          var j = null; try { j = await r.json(); } catch(e) {}
+          err.textContent = (j && j.error) ? j.error : ('Ошибка ' + r.status);
+          btn.disabled = false;
+          return;
+        }
+        back.querySelector('.order-modal').innerHTML =
+          '<div class="order-success">' +
+            '<h3>Заявка отправлена</h3>' +
+            '<p>Команда напишет тебе на <b>' + esc(contact) + '</b> в ближайшее время — обычно в течение дня.</p>' +
+            '<div class="order-modal__actions" style="justify-content:center"><button type="button" class="primary" id="o-close">Хорошо</button></div>' +
+          '</div>';
+        back.querySelector('#o-close').addEventListener('click', close);
+      } catch (e) {
+        err.textContent = 'Сеть недоступна. Попробуй ещё раз.';
+        btn.disabled = false;
+      }
+    });
+    setTimeout(function () { back.querySelector('#o-name').focus(); }, 0);
+  }
+
+  document.addEventListener('click', function (ev) {
+    var t = ev.target;
+    if (!t || !t.dataset || !t.dataset.order) return;
+    var bits = String(t.dataset.order).split('|');
+    if (bits.length !== 3) return;
+    openOrderModal(bits[0], bits[1], bits[2]);
+  });
 })();
 </script>
 </body>

@@ -412,7 +412,7 @@ const DASH_HTML = `<!doctype html>
 </style></head><body>
 <div class="top">
   <h1>Dark Force / admin</h1>
-  <div class="who">$WHO$ · <a href="#" onclick="logout();return false">выйти</a></div>
+  <div class="who">$WHO$ · <a href="/admin/orders" target="_blank" style="color:var(--accent)">Заказы</a> · <a href="#" onclick="logout();return false">выйти</a></div>
 </div>
 <div class="layout" id="layout">
   <aside class="rail" id="rail"></aside>
@@ -1156,6 +1156,41 @@ const DASH_HTML = `<!doctype html>
     '</div>';
   }
 
+  function renderCarBuildPartsBlock(slug, entryId, parts) {
+    const list = Array.isArray(parts) ? parts : [];
+    const rows = list.map((p) => {
+      const photo = p.photo
+        ? '<img src="' + escHtml(p.photo) + '" style="width:60px;height:60px;object-fit:cover;border-radius:4px;display:block;border:1px solid #1f1f24">'
+        : '<div style="width:60px;height:60px;background:repeating-linear-gradient(45deg,#15151a,#15151a 4px,#0d0d10 4px,#0d0d10 8px);border-radius:4px;border:1px solid #1f1f24"></div>';
+      return '<div data-part-id="' + escHtml(p.id) + '" data-part-build="' + escHtml(entryId) + '" style="border:1px solid #1f1f24;border-radius:6px;padding:8px;margin-bottom:6px;background:#0a0a0d">' +
+        '<div style="display:grid;grid-template-columns:60px 1fr;gap:8px;margin-bottom:6px;align-items:start">' +
+          photo +
+          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">' +
+            '<input data-part-field="name" placeholder="Название" value="' + escHtml(p.name || '') + '" style="font-size:12px">' +
+            '<input data-part-field="brand" placeholder="Бренд" value="' + escHtml(p.brand || '') + '" style="font-size:12px">' +
+            '<input data-part-field="price" placeholder="Цена (опц.)" value="' + escHtml(p.price || '') + '" style="font-size:12px">' +
+            '<input data-part-field="shopName" placeholder="Магазин" value="' + escHtml(p.shopName || '') + '" style="font-size:12px">' +
+            '<input data-part-field="shopUrl" placeholder="Ссылка на магазин (опц.)" value="' + escHtml(p.shopUrl || '') + '" style="font-size:12px;grid-column:1/-1">' +
+            '<input data-part-field="note" placeholder="Заметка (опц.)" value="' + escHtml(p.note || '') + '" style="font-size:12px;grid-column:1/-1">' +
+          '</div>' +
+        '</div>' +
+        '<div class="actions" style="display:flex;gap:6px;flex-wrap:wrap">' +
+          '<label class="pick" style="display:inline-block;padding:4px 8px;background:#1f1f24;border-radius:4px;cursor:pointer;font-size:11px">' + (p.photo ? 'Заменить фото' : 'Фото запчасти') +
+            '<input type="file" accept="image/*" style="display:none" onchange="uploadCarPartPhoto(\\'' + escHtml(slug) + '\\',\\'' + escHtml(entryId) + '\\',\\'' + escHtml(p.id) + '\\',this)"></label>' +
+          '<button style="font-size:11px;padding:4px 8px" onclick="saveCarPart(\\'' + escHtml(slug) + '\\',\\'' + escHtml(entryId) + '\\',\\'' + escHtml(p.id) + '\\')">Сохранить</button>' +
+          '<button class="danger" style="font-size:11px;padding:4px 8px;color:#ff3b30" onclick="removeCarPart(\\'' + escHtml(slug) + '\\',\\'' + escHtml(entryId) + '\\',\\'' + escHtml(p.id) + '\\')">Удалить</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+    return '<div style="margin-top:10px;padding-top:10px;border-top:1px dotted #1f1f24">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
+        '<b style="font-size:11px;letter-spacing:0.08em;color:#8b8b95;text-transform:uppercase">Запчасти · ' + list.length + '</b>' +
+        '<button style="font-size:11px;padding:4px 8px" onclick="addCarPart(\\'' + escHtml(slug) + '\\',\\'' + escHtml(entryId) + '\\')">+ Добавить запчасть</button>' +
+      '</div>' +
+      rows +
+    '</div>';
+  }
+
   function renderCarBuildsPanel(car) {
     const builds = Array.isArray(car.buildHistory) ? car.buildHistory : [];
     const gallery = Array.isArray(car.gallery) ? car.gallery : [];
@@ -1164,6 +1199,7 @@ const DASH_HTML = `<!doctype html>
       const photoBlock = e.photoUrl
         ? '<div style="margin-top:8px"><img src="' + escHtml(e.photoUrl) + '" style="max-width:100%;border-radius:6px;display:block"><button onclick="removeCarBuildPhoto(\\'' + escHtml(slug) + '\\',\\'' + escHtml(e.id) + '\\')" style="margin-top:6px">Удалить фото</button></div>'
         : '<div style="margin-top:8px"><label class="pick" style="display:inline-block;padding:6px 10px;background:#1f1f24;border-radius:6px;cursor:pointer">Загрузить фото<input type="file" accept="image/*" style="display:none" onchange="uploadCarBuildPhoto(\\'' + escHtml(slug) + '\\',\\'' + escHtml(e.id) + '\\',this)"></label></div>';
+      const partsBlock = renderCarBuildPartsBlock(slug, e.id, e.parts);
       return '<div class="build-row" data-build-id="' + escHtml(e.id) + '" style="border:1px solid #1f1f24;border-radius:8px;padding:10px;margin-bottom:8px;background:#0e0e12">' +
         '<div class="row"><div><label>Дата</label><input data-build-field="date" data-build-id="' + escHtml(e.id) + '" value="' + escHtml(e.date || '') + '" placeholder="2026-04-15"></div>' +
                        '<div><label>Заголовок</label><input data-build-field="title" data-build-id="' + escHtml(e.id) + '" value="' + escHtml(e.title || '') + '" placeholder="2JZ свап"></div></div>' +
@@ -1175,6 +1211,7 @@ const DASH_HTML = `<!doctype html>
           '<button onclick="saveCarBuild(\\'' + escHtml(slug) + '\\',\\'' + escHtml(e.id) + '\\')">Сохранить запись</button>' +
           '<button class="danger" onclick="removeCarBuild(\\'' + escHtml(slug) + '\\',\\'' + escHtml(e.id) + '\\')">Удалить</button>' +
         '</div>' +
+        partsBlock +
       '</div>';
     }).join('');
     const galleryItems = gallery.map((url, i) =>
@@ -1323,6 +1360,70 @@ const DASH_HTML = `<!doctype html>
   window.removeCarBuildPhoto = removeCarBuildPhoto;
   window.uploadCarGalleryPhoto = uploadCarGalleryPhoto;
   window.removeCarGalleryPhoto = removeCarGalleryPhoto;
+
+  async function addCarPart(carSlug, entryId) {
+    const r = await fetch('/admin/api/car-part', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ carSlug, entryId, action: 'add', part: { name: '' } }),
+    });
+    if (!r.ok) { toast('Ошибка: ' + r.status); return; }
+    toast('Запчасть добавлена');
+    await loadAll();
+    renderRail();
+    refreshFrame();
+  }
+
+  async function saveCarPart(carSlug, entryId, partId) {
+    const part = {};
+    document.querySelectorAll('[data-part-id="' + partId + '"][data-part-build="' + entryId + '"] [data-part-field]').forEach((el) => {
+      part[el.getAttribute('data-part-field')] = el.value;
+    });
+    const r = await fetch('/admin/api/car-part', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ carSlug, entryId, action: 'edit', partId, part }),
+    });
+    if (!r.ok) { toast('Ошибка: ' + r.status); return; }
+    toast('Сохранено');
+    await loadAll();
+    refreshFrame();
+  }
+
+  async function removeCarPart(carSlug, entryId, partId) {
+    if (!confirm('Удалить запчасть?')) return;
+    const r = await fetch('/admin/api/car-part', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ carSlug, entryId, action: 'remove', partId }),
+    });
+    if (!r.ok) { toast('Ошибка: ' + r.status); return; }
+    toast('Удалено');
+    await loadAll();
+    renderRail();
+    refreshFrame();
+  }
+
+  async function uploadCarPartPhoto(carSlug, entryId, partId, input) {
+    const file = input.files && input.files[0]; if (!file) return;
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('kind', 'part');
+    fd.append('carSlug', carSlug);
+    fd.append('entryId', entryId);
+    fd.append('partId', partId);
+    const r = await fetch('/admin/api/car-photo', { method: 'POST', credentials: 'same-origin', body: fd });
+    if (!r.ok) { toast('Ошибка загрузки: ' + r.status); return; }
+    toast('Фото загружено');
+    await loadAll();
+    renderRail();
+    refreshFrame();
+  }
+
+  window.addCarPart = addCarPart;
+  window.saveCarPart = saveCarPart;
+  window.removeCarPart = removeCarPart;
+  window.uploadCarPartPhoto = uploadCarPartPhoto;
   async function saveEditEntity() {
     const { kind, id } = state.editEntity;
     const body = {};
@@ -2397,6 +2498,7 @@ app.post("/admin/api/car-build", { preHandler: requireAuth }, async (req, reply)
       title: String(e.title || "").slice(0, 160),
       body: String(e.body || "").slice(0, 4000),
       photoUrl: e.photoUrl ? String(e.photoUrl).slice(0, 400) : null,
+      parts: [],
     };
     car.buildHistory.push(entry);
     await writeJson(DRIFT_DATA, data);
@@ -2477,8 +2579,10 @@ app.post("/admin/api/car-build", { preHandler: requireAuth }, async (req, reply)
   return reply.code(400).send({ error: "unknown action" });
 });
 
-// Direct file upload for a car-build entry photo or car-gallery photo.
-// Field 'kind' = 'build' | 'gallery'; field 'carSlug' identifies the car.
+// Direct file upload for a car-build entry photo, car-gallery photo, or
+// car-part photo. Field 'kind' = 'build' | 'gallery' | 'part'. carSlug
+// identifies the car; entryId is required for build/part; partId is required
+// for part.
 app.post("/admin/api/car-photo", { preHandler: requireAuth }, async (req, reply) => {
   const parts = req.parts();
   let fileBuf = null;
@@ -2486,6 +2590,7 @@ app.post("/admin/api/car-photo", { preHandler: requireAuth }, async (req, reply)
   let kind = null;
   let carSlug = null;
   let entryId = null;
+  let partId = null;
   for await (const part of parts) {
     if (part.type === "file") {
       const ext = extname(part.filename || "").toLowerCase();
@@ -2504,10 +2609,14 @@ app.post("/admin/api/car-photo", { preHandler: requireAuth }, async (req, reply)
       carSlug = part.value;
     } else if (part.fieldname === "entryId") {
       entryId = part.value;
+    } else if (part.fieldname === "partId") {
+      partId = part.value;
     }
   }
   if (!fileBuf || !carSlug || !kind) return reply.code(400).send({ error: "missing fields" });
-  if (kind !== "build" && kind !== "gallery") return reply.code(400).send({ error: "bad kind" });
+  if (kind !== "build" && kind !== "gallery" && kind !== "part") {
+    return reply.code(400).send({ error: "bad kind" });
+  }
 
   const data = await readJson(DRIFT_DATA, {});
   const car = (data.cars || []).find((c) => c.slug === carSlug);
@@ -2515,13 +2624,13 @@ app.post("/admin/api/car-photo", { preHandler: requireAuth }, async (req, reply)
   if (!Array.isArray(car.buildHistory)) car.buildHistory = [];
   if (!Array.isArray(car.gallery)) car.gallery = [];
 
-  const dir = join(PHOTO_DIR, "cars");
-  await mkdir(dir, { recursive: true });
+  const subdir = (kind === "part") ? join(PHOTO_DIR, "cars", "parts") : join(PHOTO_DIR, "cars");
+  await mkdir(subdir, { recursive: true });
   const stamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
   const original = `${kind}-${carSlug}--${stamp}-${fileName}`;
-  const fname = uniqueName(dir, original);
-  await writeFile(join(dir, fname), fileBuf);
-  const url = `/photos/cars/${fname}`;
+  const fname = uniqueName(subdir, original);
+  await writeFile(join(subdir, fname), fileBuf);
+  const url = (kind === "part") ? `/photos/cars/parts/${fname}` : `/photos/cars/${fname}`;
 
   if (kind === "build") {
     if (!entryId) return reply.code(400).send({ error: "entryId required for build" });
@@ -2531,12 +2640,253 @@ app.post("/admin/api/car-photo", { preHandler: requireAuth }, async (req, reply)
       await unlink(join(PUB, target.photoUrl)).catch(() => {});
     }
     target.photoUrl = url;
+  } else if (kind === "part") {
+    if (!entryId || !partId) return reply.code(400).send({ error: "entryId and partId required for part" });
+    const target = car.buildHistory.find((x) => x.id === entryId);
+    if (!target) return reply.code(404).send({ error: "entry not found" });
+    if (!Array.isArray(target.parts)) target.parts = [];
+    const p = target.parts.find((x) => x.id === partId);
+    if (!p) return reply.code(404).send({ error: "part not found" });
+    if (p.photo && p.photo.startsWith("/photos/cars/parts/")) {
+      await unlink(join(PUB, p.photo)).catch(() => {});
+    }
+    p.photo = url;
   } else {
     car.gallery.push(url);
   }
   await writeJson(DRIFT_DATA, data);
   await logUpload(req.adminUser, "car-" + kind + "-photo", carSlug, fname, fileBuf.length);
   return { ok: true, url };
+});
+
+// Parts CRUD on a build entry. action = add | edit | remove.
+app.post("/admin/api/car-part", { preHandler: requireAuth }, async (req, reply) => {
+  const b = req.body ?? {};
+  const carSlug = String(b.carSlug || "").trim();
+  const entryId = String(b.entryId || "").trim();
+  const action = String(b.action || "").trim();
+  if (!carSlug || !entryId || !action) {
+    return reply.code(400).send({ error: "carSlug, entryId, action required" });
+  }
+  const data = await readJson(DRIFT_DATA, {});
+  const car = (data.cars || []).find((c) => c.slug === carSlug);
+  if (!car) return reply.code(404).send({ error: "car not found" });
+  if (!Array.isArray(car.buildHistory)) car.buildHistory = [];
+  const entry = car.buildHistory.find((x) => x.id === entryId);
+  if (!entry) return reply.code(404).send({ error: "entry not found" });
+  if (!Array.isArray(entry.parts)) entry.parts = [];
+
+  if (action === "add") {
+    const p = b.part || {};
+    const part = {
+      id: randomBytes(6).toString("hex"),
+      name: String(p.name || "").slice(0, 160),
+      brand: String(p.brand || "").slice(0, 80),
+      price: String(p.price || "").slice(0, 60),
+      note: String(p.note || "").slice(0, 400),
+      photo: p.photo ? String(p.photo).slice(0, 400) : null,
+      shopUrl: p.shopUrl ? String(p.shopUrl).slice(0, 400) : null,
+      shopName: String(p.shopName || "").slice(0, 80),
+    };
+    entry.parts.push(part);
+    await writeJson(DRIFT_DATA, data);
+    return { ok: true, part };
+  }
+
+  if (action === "edit") {
+    const partId = String(b.partId || "");
+    const target = entry.parts.find((x) => x.id === partId);
+    if (!target) return reply.code(404).send({ error: "part not found" });
+    const p = b.part || {};
+    if (p.name !== undefined) target.name = String(p.name).slice(0, 160);
+    if (p.brand !== undefined) target.brand = String(p.brand).slice(0, 80);
+    if (p.price !== undefined) target.price = String(p.price).slice(0, 60);
+    if (p.note !== undefined) target.note = String(p.note).slice(0, 400);
+    if (p.photo !== undefined) target.photo = p.photo ? String(p.photo).slice(0, 400) : null;
+    if (p.shopUrl !== undefined) target.shopUrl = p.shopUrl ? String(p.shopUrl).slice(0, 400) : null;
+    if (p.shopName !== undefined) target.shopName = String(p.shopName).slice(0, 80);
+    await writeJson(DRIFT_DATA, data);
+    return { ok: true, part: target };
+  }
+
+  if (action === "remove") {
+    const partId = String(b.partId || "");
+    const idx = entry.parts.findIndex((x) => x.id === partId);
+    if (idx === -1) return reply.code(404).send({ error: "part not found" });
+    const removed = entry.parts[idx];
+    if (removed.photo && removed.photo.startsWith("/photos/cars/parts/")) {
+      await unlink(join(PUB, removed.photo)).catch(() => {});
+    }
+    entry.parts.splice(idx, 1);
+    await writeJson(DRIFT_DATA, data);
+    return { ok: true };
+  }
+
+  return reply.code(400).send({ error: "unknown action" });
+});
+
+// --- Public order endpoint (no auth — this is the buyer-facing channel). ---
+// Appends a JSONL record to /data/orders.jsonl. Best-effort console.log
+// notification (no SMTP wiring on this box yet).
+const ORDERS_FILE = join(DATA_DIR, "orders.jsonl");
+app.post("/api/car-part-order", async (req, reply) => {
+  const b = req.body ?? {};
+  const carSlug = String(b.carSlug || "").trim();
+  const entryId = String(b.entryId || "").trim();
+  const partId = String(b.partId || "").trim();
+  const name = String(b.name || "").trim().slice(0, 120);
+  const contact = String(b.contact || "").trim().slice(0, 240);
+  const address = String(b.address || "").trim().slice(0, 400);
+  const comment = String(b.comment || "").trim().slice(0, 1000);
+  if (!carSlug || !entryId || !partId || !name || !contact) {
+    return reply.code(400).send({ error: "carSlug, entryId, partId, name, contact required" });
+  }
+  // Look up the part (use published data — the public site reads it).
+  const pub = await readJson(DRIFT_DATA_PUB, {});
+  const car = (pub.cars || []).find((c) => c.slug === carSlug);
+  const entry = car && (car.buildHistory || []).find((x) => x.id === entryId);
+  const part = entry && (entry.parts || []).find((x) => x.id === partId);
+  if (!part) return reply.code(404).send({ error: "part not found" });
+
+  const orderId = randomBytes(8).toString("hex");
+  const record = {
+    type: "order",
+    orderId,
+    at: new Date().toISOString(),
+    status: "новая",
+    carSlug,
+    carName: car.name,
+    entryId,
+    entryTitle: entry.title,
+    partId,
+    partName: part.name,
+    partBrand: part.brand || "",
+    partPrice: part.price || "",
+    partShopName: part.shopName || "",
+    partShopUrl: part.shopUrl || "",
+    customer: { name, contact, address, comment },
+    ip: req.headers["x-forwarded-for"] || req.ip || "",
+  };
+  await mkdir(DATA_DIR, { recursive: true });
+  await writeFile(ORDERS_FILE, JSON.stringify(record) + "\n", { flag: "a" });
+  // Best-effort notification.
+  try {
+    console.log("[order] " + orderId + " " + name + " · " + part.name + " · " + contact + " (notify darkforcedrift@gmail.com)");
+  } catch {}
+  return { ok: true, orderId };
+});
+
+// Admin marks an order's status. Appends a status-update record to the
+// JSONL file (we never rewrite history — orders are an append-only log).
+app.post("/admin/api/order-status", { preHandler: requireAuth }, async (req, reply) => {
+  const b = req.body ?? {};
+  const orderId = String(b.orderId || "").trim();
+  const status = String(b.status || "").trim().slice(0, 60);
+  if (!orderId || !status) return reply.code(400).send({ error: "orderId, status required" });
+  const record = {
+    type: "status",
+    orderId,
+    at: new Date().toISOString(),
+    status,
+    by: req.adminUser,
+  };
+  await mkdir(DATA_DIR, { recursive: true });
+  await writeFile(ORDERS_FILE, JSON.stringify(record) + "\n", { flag: "a" });
+  return { ok: true };
+});
+
+// Helper: parse the JSONL log into a list of orders (newest first), each
+// with the latest status applied.
+async function loadOrdersList() {
+  let text = "";
+  try { text = await readFile(ORDERS_FILE, "utf8"); } catch { return []; }
+  const lines = text.split(/\r?\n/).filter(Boolean);
+  const byId = new Map();
+  for (const line of lines) {
+    let obj; try { obj = JSON.parse(line); } catch { continue; }
+    if (obj.type === "order") {
+      byId.set(obj.orderId, { ...obj });
+    } else if (obj.type === "status") {
+      const existing = byId.get(obj.orderId);
+      if (existing) {
+        existing.status = obj.status;
+        existing.statusAt = obj.at;
+        existing.statusBy = obj.by;
+      }
+    }
+  }
+  const list = Array.from(byId.values());
+  list.sort((a, b) => (b.at || "").localeCompare(a.at || ""));
+  return list;
+}
+
+// Admin orders dashboard (server-rendered HTML).
+app.get("/admin/orders", { preHandler: requireAuth }, async (req, reply) => {
+  const orders = await loadOrdersList();
+  const rows = orders.map((o) => {
+    const fmt = (o.at || "").slice(0, 16).replace("T", " ");
+    const cust = o.customer || {};
+    const statusClass = o.status === "обработана" ? "done" : (o.status === "отменена" ? "cancel" : "new");
+    const carLink = '/paddock/car.html?slug=' + encodeURIComponent(o.carSlug || "");
+    return '<tr>' +
+      '<td class="mono">' + escapeHtml(fmt) + '</td>' +
+      '<td><a href="' + escapeHtml(carLink) + '" target="_blank">' + escapeHtml(o.carName || o.carSlug || "—") + '</a></td>' +
+      '<td>' + escapeHtml(o.entryTitle || "—") + '</td>' +
+      '<td><b>' + escapeHtml(o.partName || "—") + '</b>' +
+        (o.partBrand ? ' <span class="dim">· ' + escapeHtml(o.partBrand) + '</span>' : '') +
+        (o.partPrice ? '<br><span class="dim">' + escapeHtml(o.partPrice) + '</span>' : '') + '</td>' +
+      '<td>' + escapeHtml(cust.name || "—") + (cust.address ? '<br><span class="dim">' + escapeHtml(cust.address) + '</span>' : '') + '</td>' +
+      '<td class="mono">' + escapeHtml(cust.contact || "—") + (cust.comment ? '<br><span class="dim">' + escapeHtml(cust.comment) + '</span>' : '') + '</td>' +
+      '<td><span class="status ' + statusClass + '">' + escapeHtml(o.status || "новая") + '</span><br>' +
+        '<button onclick="setStatus(\'' + escapeHtml(o.orderId) + '\',\'обработана\')">обработана</button> ' +
+        '<button onclick="setStatus(\'' + escapeHtml(o.orderId) + '\',\'отменена\')">отменена</button> ' +
+        '<button onclick="setStatus(\'' + escapeHtml(o.orderId) + '\',\'новая\')">новая</button>' +
+      '</td>' +
+    '</tr>';
+  }).join("");
+  const empty = orders.length ? '' : '<tr><td colspan="7" style="text-align:center;padding:40px;color:#8b8b95">Заказы появятся здесь когда клиенты начнут писать</td></tr>';
+  reply.type("text/html").send(`<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><title>Заказы — Dark Force admin</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  body { margin:0; background:#0a0a0c; color:#f5f5f7; font:14px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",sans-serif; }
+  .top { display:flex; justify-content:space-between; align-items:center; padding:14px 22px; border-bottom:1px solid #1f1f24; }
+  .top h1 { margin:0; font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:#ff3b30; }
+  .top a { color:#8b8b95; text-decoration:none; font-size:12px; margin-left:14px; }
+  .top a:hover { color:#ff3b30; }
+  table { width:100%; border-collapse:collapse; }
+  th, td { padding:10px 14px; border-bottom:1px solid #1f1f24; text-align:left; vertical-align:top; font-size:13px; }
+  th { color:#8b8b95; text-transform:uppercase; font-size:11px; letter-spacing:0.1em; background:#0d0d10; }
+  .mono { font-family: ui-monospace, monospace; font-size:12px; color:#c5c5cf; }
+  .dim { color:#8b8b95; font-size:11px; }
+  .status { display:inline-block; padding:3px 9px; border-radius:4px; font-size:11px; letter-spacing:0.06em; text-transform:uppercase; font-family: ui-monospace, monospace; }
+  .status.new { background:#ff3b30; color:white; }
+  .status.done { background:#30d158; color:#0a0a0c; }
+  .status.cancel { background:#1f1f24; color:#8b8b95; }
+  td button { font:inherit; font-size:10px; padding:3px 8px; margin-top:4px; background:#1a1a20; border:1px solid #1f1f24; color:#f5f5f7; border-radius:4px; cursor:pointer; }
+  td button:hover { border-color:#ff3b30; color:#ff3b30; }
+  a { color:#ff3b30; text-decoration:none; }
+</style></head><body>
+<div class="top">
+  <h1>Dark Force / заказы</h1>
+  <div><a href="/admin">← в админку</a></div>
+</div>
+<table>
+  <thead><tr><th>Дата</th><th>Машина</th><th>Этап</th><th>Запчасть</th><th>Имя клиента</th><th>Контакт</th><th>Статус</th></tr></thead>
+  <tbody>${rows}${empty}</tbody>
+</table>
+<script>
+  async function setStatus(orderId, status) {
+    const r = await fetch('/admin/api/order-status', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ orderId: orderId, status: status }),
+    });
+    if (!r.ok) { alert('Ошибка: ' + r.status); return; }
+    location.reload();
+  }
+</script>
+</body></html>`);
 });
 
 app.delete("/admin/api/cars/:id", { preHandler: requireAuth }, async (req, reply) => {
