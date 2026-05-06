@@ -386,6 +386,32 @@ button { background: none; border: 0; color: inherit; font: inherit; cursor: poi
 
 body.no-scroll { overflow: hidden; }
 
+/* Mobile menu backdrop — sibling of .topbar, injected by shared.js.
+   Only matters at the mobile breakpoint where the nav becomes a
+   slide-in drawer — at desktop sizes the drawer sits inline so the
+   backdrop stays out of the way (display:none). When the menu is
+   open, the backdrop catches clicks (closes menu) and visually
+   anchors the drawer over the content beneath. */
+.topbar__backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  opacity: 0;
+  transition: opacity .22s var(--ease);
+  pointer-events: none;
+}
+@media (max-width: 820px) {
+  .topbar__backdrop { display: block; }
+  .topbar.topbar--open + .topbar__backdrop {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
 /* Respect iOS notch / rounded corners */
 .topbar__inner {
   padding-left: max(28px, env(safe-area-inset-left));

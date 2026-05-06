@@ -305,7 +305,30 @@
   letter-spacing: 0.08em;
   transform: rotate(3deg);
   z-index: 3;
+  /* Auto-width: no fixed dimensions, content-driven, no wrap.
+     Long labels get clipped with ellipsis at a sane max-width
+     instead of overflowing the card. */
+  width: auto;
+  max-width: calc(100% - 32px);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
+/* Status variants — same shape, different colour anchor.
+   Add `data-status="pro|crew|driver"` to the tape to swap. */
+.pad-crew__tape[data-status="crew"] {
+  background: oklch(0.55 0.01 250);
+  color: var(--fg);
+}
+.pad-crew__tape[data-status="driver"] {
+  background: transparent;
+  color: var(--fg);
+  border: 1px solid var(--fg);
+}
+/* PRO is the default orange — no override needed. */
 .pad-crew__num {
   position: absolute;
   bottom: 10px; left: 12px;
