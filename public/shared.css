@@ -386,14 +386,21 @@ button { background: none; border: 0; color: inherit; font: inherit; cursor: poi
 
 body.no-scroll { overflow: hidden; }
 
-/* Soon-state nav link — greyed out, no underline on hover, retains
-   its anchor so the page stays reachable but visually parked. Used
-   right now for Tickets — file kept around, link visually inactive
-   until the team is ready to flip it on. */
+/* Soon-state nav link — currently fully HIDDEN. Owner wants the
+   Tickets section parked while we figure out whether ticket sales
+   actually belong on this site. The page file (/paddock/tickets.html)
+   is preserved on disk and in git; only the nav link is hidden. To
+   bring it back: change `display: none` below to the previous greyed
+   styles (kept commented). */
 .nav a.soon {
+  display: none !important;
+  /*
+  Previous greyed-but-visible state:
   color: rgba(255, 255, 255, 0.28) !important;
   pointer-events: auto;
+  */
 }
+/*
 .nav a.soon:hover { color: rgba(255, 255, 255, 0.42) !important; }
 .nav a.soon::after {
   content: 'soon';
@@ -405,6 +412,7 @@ body.no-scroll { overflow: hidden; }
   text-transform: uppercase;
   vertical-align: 1px;
 }
+*/
 
 /* Mobile menu backdrop — sibling of .topbar, injected by shared.js.
    Only matters at the mobile breakpoint where the nav becomes a
