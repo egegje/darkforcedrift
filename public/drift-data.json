@@ -20,7 +20,7 @@
         "usa"
       ],
       "category": "world",
-      "photo": "/photos/drivers/driver-1--2026-04-28T21-32-36-r2.png",
+      "photo": "/photos/drivers/driver-1--2026-05-05T23-15-51-r2.png",
       "instagram": null
     },
     {
@@ -44,7 +44,7 @@
         "1000hp"
       ],
       "category": "world",
-      "photo": "/photos/drivers/driver-2--2026-04-28T21-33-33-r3.png",
+      "photo": "/photos/drivers/driver-2--2026-05-05T23-16-01-r3.png",
       "instagram": null
     },
     {
@@ -65,7 +65,7 @@
         "japan"
       ],
       "category": "world",
-      "photo": "/photos/drivers/driver-3--2026-04-28T21-34-48-r1.png",
+      "photo": "/photos/drivers/driver-3--2026-05-05T23-16-13-r1.png",
       "instagram": null
     },
     {
@@ -251,9 +251,9 @@
       "id": 1,
       "photo": "/photos/cars/car-1--2026-04-28T21-40-40-_1315237.JPEG",
       "photoFocal": {
-        "x": 30,
+        "x": 50,
         "y": 50,
-        "zoom": 2.1
+        "zoom": 1
       }
     },
     {
@@ -341,7 +341,7 @@
       "livery": "",
       "notes": "Классика swap-сцены: 1JZ под капотом, лёгкий кузов e36.",
       "id": 5,
-      "photo": null
+      "photo": "/photos/cars/car-5--2026-05-05T23-26-47-55267840-0B6B-4EAA-B75D-54F02ADE83E1.JPG"
     },
     {
       "name": "BMW e92",
@@ -359,7 +359,7 @@
       "livery": "",
       "notes": "Полный билд под Pro-Am: 2JZ свап, FIA-каркас, фабричная электроника Ecumaster.",
       "id": 6,
-      "photo": null
+      "photo": "/photos/cars/car-6--2026-05-05T23-46-54-bbbff96f-dd1e-47f9-a216-ea8d9c784937.JPG"
     }
   ],
   "team": {

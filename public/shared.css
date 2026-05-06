@@ -188,6 +188,40 @@ button { background: none; border: 0; color: inherit; font: inherit; cursor: poi
   letter-spacing: 0.04em;
 }
 .brand b { color: var(--accent); }
+
+/* Horizontal brand: orange shard mark + DARK FORCE wordmark inline.
+   Compact, editorial — kept slim so it doesn't dominate the topbar. */
+.brand--stack {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  line-height: 1;
+  text-decoration: none;
+  color: var(--fg);
+}
+.brand--stack .monster-head,
+.brand--stack .brand__mark {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+}
+.brand--stack .brand__wordmark {
+  font-family: var(--font-head);
+  font-size: 24px;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+  display: block;
+}
+.brand--stack .brand__wordmark b {
+  color: var(--accent);
+  font-weight: inherit;
+}
+@media (max-width: 760px) {
+  .brand--stack { gap: 8px; }
+  .brand--stack .monster-head,
+  .brand--stack .brand__mark { width: 26px; height: 26px; }
+  .brand--stack .brand__wordmark { font-size: 19px; letter-spacing: 0.1em; }
+}
 .nav {
   display: flex;
   gap: 22px;
@@ -370,36 +404,43 @@ body.no-scroll { overflow: hidden; }
 
   .topbar__burger { display: block; }
 
+  /* Right-side drawer — ~320px wide, leaves the page visible on the left
+     so the menu doesn't feel like a curtain. Brand stays visible up top. */
   .nav {
     position: fixed;
-    inset: 0;
     top: 0;
-    padding: 88px 28px 40px;
-    padding-top: max(88px, calc(64px + env(safe-area-inset-top)));
-    padding-bottom: max(40px, env(safe-area-inset-bottom));
+    right: 0;
+    bottom: 0;
+    left: auto;
+    width: min(320px, 82vw);
+    padding: max(96px, calc(72px + env(safe-area-inset-top))) 24px max(24px, env(safe-area-inset-bottom));
     background: var(--bg);
     flex-direction: column;
-    gap: 8px;
-    font-size: 28px;
-    letter-spacing: 0.04em;
+    gap: 0;
+    font-size: 20px;
+    letter-spacing: 0.05em;
     z-index: 50;
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-12px);
-    transition: opacity .22s var(--ease), transform .28s var(--ease), visibility 0s linear .28s;
+    transform: translateX(100%);
+    transition: transform .3s var(--ease), opacity .18s var(--ease), visibility 0s linear .3s;
+    overscroll-behavior: contain;
   }
   .topbar--open .nav {
     opacity: 1;
     visibility: visible;
-    transform: translateY(0);
-    transition: opacity .22s var(--ease), transform .28s var(--ease), visibility 0s;
+    transform: translateX(0);
+    transition: transform .32s var(--ease), opacity .2s var(--ease), visibility 0s;
   }
   .nav a {
     display: block;
     padding: 14px 0;
     border-bottom: 1px solid var(--line);
     color: var(--fg);
+    font-size: 19px;
+    letter-spacing: 0.05em;
   }
+  .nav a:last-of-type { border-bottom: none; }
   .nav a.active { color: var(--accent); }
 
   .topbar__right { display: none; }
